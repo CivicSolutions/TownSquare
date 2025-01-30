@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="comApp.posts.HelpPost"
+             Title="HelpPost">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label Text="Help Post" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" Margin="0, 0, 0, 15"/>
+            <Label Text="Title" FontSize="18" Margin="0,0,0,0"/>
+            <Entry x:Name="titleEntry" Placeholder="Title" Text="{Binding Title}" TextChanged="OnTitleEntryTextChanged"/>
+            <Label x:Name="titleErrorLabel" Margin="0,-10,0,10"  TextColor="Red" FontSize="14" IsVisible="{Binding TitleValidationError}" Text="{Binding TitleErrorMessage}"/>
+            <Label Text="Description" FontSize="18" Margin="0,0,0,0"/>
+            <Editor x:Name="descriptionEditor" Placeholder="Description" HeightRequest="100" Text="{Binding Description}" TextChanged="OnDescriptionEditorTextChanged"/>
+            <Label x:Name="descriptionErrorLabel" Margin="0,-10,0,10"  TextColor="Red" FontSize="14" IsVisible="{Binding DescriptionValidationError}" Text="{Binding DescriptionErrorMessage}"/>
+            <Label Text="Price in CHF" FontSize="18" Margin="0,0,0,0"/>
+            <Entry x:Name="priceEntry" Placeholder="20.-" Keyboard="Numeric" Text="{Binding Price}" TextChanged="OnPriceEntryTextChanged"/>
+            <Label x:Name="priceErrorLabel" Margin="0,-10,0,10"  TextColor="Red" FontSize="14"  IsVisible="{Binding PriceValidationError}" Text="{Binding PriceErrorMessage}"/>
+            <Label Text="Telephone Number" FontSize="18" Margin="0,0,0,0"/>
+            <Entry x:Name="telephoneEntry" Placeholder="076 000 00 00" Keyboard="Telephone" Text="{Binding Telephone}" TextChanged="OnTelephoneEntryTextChanged"/>
+            <Label x:Name="telephoneErrorLabel" Margin="0,-10,0,10"  TextColor="Red" FontSize="14" IsVisible="{Binding TelephoneValidationError}" Text="{Binding TelephoneErrorMessage}"/>
+            <Button Text="Submit Post" Style="{StaticResource GreyButtonStyle}" Margin="0, 5, 0, 5" HorizontalOptions="Center" Clicked="OnSubmitPostClicked"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

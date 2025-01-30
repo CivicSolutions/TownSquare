@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="comApp.signUp.signUpPage"
+             Title="signUpPage">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="Center" HorizontalOptions="CenterAndExpand">
+
+            <Label Text="Name" />
+            <Entry Text="{Binding Name}" WidthRequest="250" Placeholder="Enter your name" />
+
+            <Label Text="Email" />
+            <Entry Text="{Binding Email}" WidthRequest="250" Placeholder="Enter your email" />
+
+            <Label Text="Bio" />
+            <Entry Text="{Binding Bio}" WidthRequest="250" HeightRequest="75" Placeholder="Enter your bio" />
+
+            <Label Text="Password" />
+            <Entry Text="{Binding Password}" WidthRequest="250" Placeholder="Enter your password" IsPassword="True" />
+
+            <!--<Label Text="Confirm Password" />
+        <Entry Text="{Binding confirmPassword}" WidthRequest="250" Placeholder="Confirm your password" IsPassword="True" />-->
+
+            <Button Text="Register" Command="{Binding SignupCommand}" Margin="0, 5, 0, 5" Style="{StaticResource GreyButtonStyle}"/>
+            <Button Text="Login" Clicked="OnLoginButtonClicked" Style="{StaticResource GreyButtonStyle}"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

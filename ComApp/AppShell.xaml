@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="comApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:comApp"
+    xmlns:login="clr-namespace:comApp.login"
+    xmlns:signUp="clr-namespace:comApp.signUp"
+    xmlns:com="clr-namespace:comApp.communities"
+    xmlns:post="clr-namespace:comApp.posts"
+    xmlns:pins="clr-namespace:comApp.pins"
+    xmlns:account="clr-namespace:comApp.account"
+    Shell.FlyoutBehavior="Disabled"
+    Title="comApp">
+
+    <!--<ShellContent
+        Title="Login"
+        ContentTemplate="{DataTemplate login:login}"
+        Route="LoginPage" />
+
+    --><!-- Add ShellContent for SignupPage --><!--
+    <ShellContent
+        Title="Sign Up"
+        ContentTemplate="{DataTemplate signUp:signUp}"
+        Route="SignupPage" />
+ö
+
+    <ShellContent
+    Title="Communities"
+    ContentTemplate="{DataTemplate com:CommunitiesPage}"
+    Route="CommunitiesPage" />-->
+
+    <Shell.TitleView>
+        <ContentView />
+    </Shell.TitleView>
+
+
+
+    <TabBar>
+        <ShellContent Route="MainPage" Title="Home" Icon="home_icon.png" ContentTemplate="{DataTemplate local:MainPage}" />
+
+        <ShellContent Route="PostsPage" Title="News" Icon="news_icon.png" ContentTemplate="{DataTemplate post:PostsPage}" />
+
+        <ShellContent Route="CreatePins" Title="Create Pin" Icon="create_pin.jpg" ContentTemplate="{DataTemplate pins:CreatePins}" />
+
+        <ShellContent Route="HelpPostsPage" Title="Help Posts" Icon="help_post.jpg" ContentTemplate="{DataTemplate post:HelpPostsPage}" />
+
+        <ShellContent Route="AccountSettingsPage" Title="Account" Icon="account_icon.jpg" ContentTemplate="{DataTemplate account:AccountSettingsPage}" />
+
+        <ShellContent
+        Title="DevTools"
+        ContentTemplate="{DataTemplate login:Login}"
+        Icon="engineer.png"
+        Route="LoginPage" />
+    </TabBar>
+    
+</Shell>

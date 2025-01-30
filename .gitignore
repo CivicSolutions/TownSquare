@@ -1,0 +1,88 @@
+# Ignore Visual Studio temporary files, build results, and
+# common configuration files.
+# User-specific files
+.vscode/
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Mono auto generated files
+mono_crash.*
+
+# Mac build artifacts
+*.app
+*.dSYM
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# NuGet packages
+*.nupkg
+# The packages folder can be ignored because of the presence of the .csproj file
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/[Pp]ackages/repositories.config
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# VS Code directories
+.vscode/
+.vscode/*
+.history/
+
+# Windows crash dump files
+*.cab
+*.log
+*.csv
+*.dmp
+*.patch
+*.patches
+
+# Windows error reporting
+*.wer
+
+# Node modules
+node_modules/
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+._.Trashes
+
+# JetBrains Rider
+.idea/
+.idea/*
+*.sln.iml
+
+# End of https://www.toptal.com/developers/gitignore/api/visualstudio
+
+# .NET specific
+project.lock.json
+project.fragment.lock.json
+artifacts/
+wwwroot/node_modules/

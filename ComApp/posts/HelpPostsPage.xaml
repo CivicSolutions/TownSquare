@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="comApp.posts.HelpPostsPage"
+             Title="HelpPostsPage">
+    <ScrollView>
+        <ScrollView>
+        <StackLayout Padding="20">
+            <Button Text="Create a Post"
+                HorizontalOptions="Center"
+                VerticalOptions="Start"
+                Clicked="OnCreatePostClicked"
+                Style="{StaticResource GreyButtonStyle}"
+                Margin="0, 0, 0, 20"
+                WidthRequest="200"
+                HeightRequest="50"
+                FontSize="18"/>
+
+            <CollectionView x:Name="HelpPostsCollectionView">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <!-- Define how each post should be displayed -->
+                        <Frame Padding="10"
+                   CornerRadius="10"
+                   Margin="10"
+                   HasShadow="True"
+                   BackgroundColor="White">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Title -->
+                                <Label Text="{Binding Title}" 
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           Margin="0, 0, 0, 5"
+                           Grid.Row="0"
+                           Grid.Column="0"
+                           HorizontalOptions="StartAndExpand"/>
+
+                                <!-- Posted by -->
+                                <Label Text="{Binding UserName, StringFormat='Posted by: {0}'}" 
+                           FontAttributes="Italic"
+                           TextColor="Gray"
+                           Margin="0, 0, 10, 0"
+                           Grid.Row="0"
+                           Grid.Column="1"
+                           HorizontalOptions="End"/>
+
+                                <!-- Description -->
+                                <Label Text="{Binding Description}" 
+                           Margin="0, 0, 0, 5"
+                           Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="2"/>
+
+                                <!-- Price -->
+                                <StackLayout Orientation="Horizontal" Margin="0, 0, 0, 5" Grid.Row="2" Grid.Column="0">
+                                    <Label Text="Reward: "
+                               FontAttributes="Bold"
+                               TextColor="Green"
+                               VerticalOptions="Center"/>
+                                    <Label Text="{Binding Price}"
+                               TextColor="Green"
+                               VerticalOptions="Center"/>
+                                    <Label Text=" CHF"
+                               TextColor="Green"
+                               VerticalOptions="Center"/>
+                                </StackLayout>
+
+                                <!-- Telephone -->
+                                <StackLayout Orientation="Horizontal" Margin="0, 0, 0, 5" Grid.Row="2" Grid.Column="1">
+                                    <Label Text="Telephone: "
+                               FontAttributes="Bold"
+                               TextColor="Blue"
+                               VerticalOptions="Center"/>
+                                    <Label Text="{Binding Telephone}"
+                               TextColor="Blue"
+                               VerticalOptions="Center"/>
+                                </StackLayout>
+                                <Button Text="Accept"
+                            Style="{StaticResource GreyButtonStyle}"
+                            Clicked="OnAcceptButtonClicked"                            
+                            FontSize="18"
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            WidthRequest="125"
+                            HorizontalOptions="Center"
+                            Margin="0, 10, 0, 10"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </StackLayout>
+    </ScrollView>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,17 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="comApp.posts.CreatePostPage"
+             Title="Create Post">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label Text="Create Post" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" Margin="0, 0, 0, 15"/>
+            <Label Text="Title" FontSize="18" Margin="0,0,0,0"/>
+            <Entry x:Name="titleEntry" Placeholder="Title" TextChanged="OnTitleEntryTextChanged"/>
+            <Label x:Name="titleErrorLabel" Margin="0,-10,0,10" TextColor="Red" FontSize="14" IsVisible="{Binding TitleValidationError}" Text="{Binding TitleErrorMessage}"/>
+            <Label Text="Content" FontSize="18" Margin="0,0,0,0"/>
+            <Editor x:Name="contentEditor" Placeholder="Content" HeightRequest="100" TextChanged="OnContentEditorTextChanged"/>
+            <Label x:Name="contentErrorLabel" Margin="0,-10,0,10" TextColor="Red" FontSize="14" IsVisible="{Binding ContentValidationError}" Text="{Binding ContentErrorMessage}"/>
+            <Button Text="Submit Post" Style="{StaticResource GreyButtonStyle}" Margin="0, 5, 0, 5" HorizontalOptions="Center" Clicked="OnSubmitPostClicked"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

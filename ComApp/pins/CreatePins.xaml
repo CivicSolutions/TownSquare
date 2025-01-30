@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="comApp.pins.CreatePins"
+             Title="CreatePins">
+       <ScrollView>
+        <StackLayout>
+            <Label Text="Create a pin" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" Margin="0, 0, 0, 15"/>
+            <StackLayout Padding="20" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <StackLayout Margin="0,0,0,0">
+                    <Grid ColumnSpacing="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Frame Grid.Column="0"
+                           Style="{StaticResource PinButtonFrameStyle}"
+                           Margin="0,0,0,0">
+
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnWarningClicked" />
+                            </Frame.GestureRecognizers>
+                            <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="5">
+                                <Image Source="warning.png" WidthRequest="50" HeightRequest="50" Aspect="AspectFit" Margin="0, 20, 0, 0"/>
+                                <Label Text="Warning" FontSize="16" TextColor="#333333" HorizontalOptions="Center" Margin="0, 10, 0, 30"/>
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame Grid.Column="1"
+                           Style="{StaticResource PinButtonFrameStyle}">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnHelpClicked" />
+                            </Frame.GestureRecognizers>
+                            <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="5">
+                                <Image Source="help.png" WidthRequest="50" HeightRequest="50" Aspect="AspectFit" Margin="0, 20, 0, 0"/>
+                                <Label Text="Help" FontSize="16" TextColor="#333333" HorizontalOptions="Center" Margin="0, 10, 0, 30"/>
+                            </StackLayout>
+                        </Frame>
+                    </Grid>
+                </StackLayout>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

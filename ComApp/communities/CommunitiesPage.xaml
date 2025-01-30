@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="comApp.communities.CommunitiesPage"
+             Title="Communities">
+    <ContentPage.Content>
+        <StackLayout>
+            <ListView ItemsSource="{Binding Communities}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout>
+                                <Label Text="{Binding Name}" />
+                                <Label Text="{Binding Bio}" />
+                                <Button Text="Request Membership" 
+                                    Command="{Binding Source={x:Reference communitiesPage}, Path=BindingContext.RequestMembershipCommand}" 
+                                    CommandParameter="{Binding .}" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
