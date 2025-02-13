@@ -1,0 +1,50 @@
+name: .NET MAUI CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install MAUI Workload
+        run: dotnet workload install maui
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Android
+        run: dotnet build -f net8.0-android --no-restore --configuration Release
+
+      - name: Build iOS
+        run: dotnet build -f net8.0-ios --no-restore --configuration Release
+        if: runner.os == 'macOS'
+
+      - name: Run Tests
+        run: dotnet test --no-restore --verbosity normal
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server (Replace with actual deploy command)
+        run: echo "Deploying the app..." 
