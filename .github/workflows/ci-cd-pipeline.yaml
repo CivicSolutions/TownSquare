@@ -34,35 +34,10 @@ jobs:
 
       - name: Run Tests
         run: dotnet test --no-restore --verbosity normal
-
-  build-ios:
-    runs-on: macos-latest  # iOS build on macOS
-    
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Install MAUI Workload
-        run: dotnet workload install maui
-
-      - name: Restore Dependencies
-        run: dotnet restore
-
-      - name: Build iOS
-        run: dotnet build -f net8.0-ios --no-restore --configuration Release
-        if: runner.os == 'macOS'
-
-      - name: Run Tests
-        run: dotnet test --no-restore --verbosity normal
-
+        
   deploy:
-    needs: [build-android, build-ios]  # Ensure deploy happens after both builds
-    runs-on: macos-latest  # You can also use windows-latest here, depending on where you deploy from
+    needs: [build-android]
+    runs-on: windows-latest
     if: github.ref == 'refs/heads/main'
     
     steps:
