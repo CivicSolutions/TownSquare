@@ -20,7 +20,7 @@ namespace comApp.db
             try
             {
                 _connection.Open();
-                Console.WriteLine("Database connection opened.");
+                Console.WriteLine("Database connection opened yay.");
             }
             catch (MySqlException ex)
             {
