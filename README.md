@@ -1,6 +1,6 @@
 # ComApp - where Community thrives
 
-[![comapplogo.png](https://i.postimg.cc/KjGpXgmb/comapplogo.png)](https://postimg.cc/xJZ3M8kp)
+[![comapplogo.png](https://i.postimg.cc/jjGXFDt8/Town-Square.png)](https://postimg.cc/xkhN7JbK)
 
 
 
