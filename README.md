@@ -1,8 +1,6 @@
 # ComApp - where Community thrives
 
-[![comapplogo.png](https://i.postimg.cc/jjGXFDt8/Town-Square.png)](https://postimg.cc/xkhN7JbK)
-
-
+[![Town-Square.png](https://i.postimg.cc/j5NK3Dsc/Town-Square.png)](https://postimg.cc/jwsGLdnn)
 
 
 **ComApp** is designed to bring people together, fostering real connections within local communities.
