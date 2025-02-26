@@ -1,17 +1,17 @@
 namespace comApp.pins;
-using comApp.pins;
 using comApp.posts;
-using comApp.login;
 using comApp.db;
 
 public partial class CreatePins : ContentPage
 {
     public dbConnection _dbConnection;
-	public CreatePins()
+
+    public CreatePins()
     {
         InitializeComponent();
         _dbConnection = new dbConnection();
     }
+
     private async void OnWarningClicked(object sender, EventArgs e)
     {
         await Navigation.PushAsync(new WarningPin());
@@ -21,15 +21,17 @@ public partial class CreatePins : ContentPage
     {
         await Navigation.PushAsync(new HelpPin());
     }
+
     private async void CheckUser()
     {
-        int userId = _dbConnection.GetUserIdFromSession();
+        int userId = App.UserId;
 
         if (userId < 0)
         {
             await Shell.Current.GoToAsync("//LoginPage");
         }
     }
+
     protected override void OnAppearing()
     {
         base.OnAppearing();

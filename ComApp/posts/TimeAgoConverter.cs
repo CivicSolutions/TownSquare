@@ -1,6 +1,3 @@
-using System;
-using comApp.posts;
-
 namespace comApp.posts
 {
     public class TimeAgoConverter : IValueConverter

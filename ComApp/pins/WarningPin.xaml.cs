@@ -21,6 +21,7 @@ public partial class WarningPin : ContentPage
             Command = new Command(OnCloseClicked)
         });
     }
+
     private async void OnCloseClicked()
     {
         bool result = await DisplayAlert("Close", "Are you sure you want to close?", "Yes", "No");
@@ -30,6 +31,7 @@ public partial class WarningPin : ContentPage
             await Navigation.PopAsync();
         }
     }
+
     private async void OnUploadPictureClicked(object sender, EventArgs e)
     {
         var result = await FilePicker.PickAsync(new PickOptions
@@ -43,6 +45,7 @@ public partial class WarningPin : ContentPage
             selectedImage.Source = ImageSource.FromFile(result.FullPath);
         }
     }
+
     private async Task<Location> GetLocationAsync()
     {
         try
@@ -67,6 +70,7 @@ public partial class WarningPin : ContentPage
             return null;
         }
     }
+
     private void OnTitleEntryTextChanged(object sender, TextChangedEventArgs e)
     {
         string title = e.NewTextValue;
@@ -83,6 +87,7 @@ public partial class WarningPin : ContentPage
             titleErrorLabel.Text = string.Empty;
         }
     }
+
     private void OnDescriptionEditorTextChanged(object sender, TextChangedEventArgs e)
     {
         string description = e.NewTextValue;
@@ -99,6 +104,7 @@ public partial class WarningPin : ContentPage
             descriptionErrorLabel.Text = string.Empty;
         }
     }
+
     private async void OnSubmitClicked(object sender, EventArgs e)
     {
         string title = titleEntry.Text;
@@ -125,7 +131,7 @@ public partial class WarningPin : ContentPage
 
         try
         {
-            _dbConnection.InsertPin(1, title, description, DateTime.Now, location.Latitude, location.Longitude, 1, 2);
+            await _dbConnection.InsertPin(1, title, description, DateTime.Now, location.Latitude, location.Longitude, 1, 2);
             string message = "Pin added successfully \u2714";
             await DisplayAlert("Success", message, "OK");
             await Navigation.PopAsync();
@@ -139,6 +145,7 @@ public partial class WarningPin : ContentPage
             await DisplayAlert("Error", "An error occurred: " + ex.Message, "OK");
         }
     }
+
     protected override void OnAppearing()
     {
         base.OnAppearing();

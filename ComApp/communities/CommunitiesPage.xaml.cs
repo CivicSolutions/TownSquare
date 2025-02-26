@@ -1,6 +1,3 @@
-
-using comApp.communities;
-
 namespace comApp.communities
 {
     public partial class CommunitiesPage : ContentPage

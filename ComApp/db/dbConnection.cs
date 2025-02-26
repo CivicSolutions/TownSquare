@@ -1,767 +1,199 @@
-﻿using comApp.communities;
-using comApp.posts;
-using MySqlConnector;
+﻿using MySqlConnector;
+using System.Text;
+using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace comApp.db
 {
     public class dbConnection
     {
         private MySqlConnection _connection;
+        private readonly HttpClient _httpClient;
+        private readonly string _baseUrl = "https://townsquareapi.onrender.com/api";
 
         public dbConnection()
         {
             string connectionString = "server=10.0.2.2;port=3306;database=comapp;user=root;password=sml12345";
 
             _connection = new MySqlConnection(connectionString);
+
+            _httpClient = new HttpClient();
         }
 
-        public void OpenConnection()
+        // Helper method for GET requestss
+        public async Task<string> GetRequest(string endpoint)
         {
-            try
-            {
-                _connection.Open();
-                Console.WriteLine("Database connection opened yay.");
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+            HttpResponseMessage response = await _httpClient.GetAsync(_baseUrl + endpoint);
+            return await HandleResponse(response);
         }
 
-        public void CloseConnection()
+        // Helper method for POST requests
+        public async Task<string> PostRequest(string endpoint, object requestBody)
         {
-            try
-            {
-                _connection.Close();
-                Console.WriteLine("Database connection closed.");
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+            string jsonContent = JsonConvert.SerializeObject(requestBody);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PutAsync(_baseUrl + endpoint, content);
+            return await HandleResponse(response);
         }
 
-        public bool TestConnection()
+        // Helper method for PUT requests
+        public async Task<string> PutRequest(string endpoint, object requestBody)
         {
-            try
-            {
-                _connection.Open();
-                _connection.Close();
-                Console.WriteLine("Database connection test successful.");
-                return true;
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                return false;
-            }
+            string jsonContent = JsonConvert.SerializeObject(requestBody);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PutAsync(_baseUrl + endpoint, content);
+            return await HandleResponse(response);
         }
 
-        // Example method to execute SQL queries
-        public void ExecuteQuery(string query)
+        // Helper method for Delete requests
+        public async Task<string> DeleteRequest(string endpoint)
         {
-            try
-            {
-                MySqlCommand cmd = new MySqlCommand(query, _connection);
-                cmd.ExecuteNonQuery();
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+            HttpResponseMessage response = await _httpClient.DeleteAsync(_baseUrl + endpoint);
+            return await HandleResponse(response);
         }
 
-        //----------------------------------------------------------------------Querys---------------------------------------------------
-        public void InsertUser(string name, string email, string bio, string password)
+        // handle the response and return it as a string
+        public async Task<string> HandleResponse(HttpResponseMessage response)
         {
-            try
+            if (response.IsSuccessStatusCode)
             {
-                OpenConnection();
-
-                string query = @"
-                    INSERT INTO Users (Name, Email, Bio, Password) 
-                    VALUES (@Name, @Email, @Bio, @Password);
-                ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@Name", name);
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@Bio", bio);
-                    cmd.Parameters.AddWithValue("@Password", password);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            finally
-            {
-                CloseConnection();
-            }
-        }
-
-        // Select user from the database by email and password
-        public bool SelectUserByEmailAndPassword(string email, string password)
-        {
-            try
-            {
-                OpenConnection();
-
-                string query = @"
-                    SELECT * FROM Users 
-                    WHERE Email = @Email AND Password = @Password;
-                ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@Password", password);
-
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        // Check if any rows are returned
-                        return reader.HasRows;
-                    }
-                }
-            }
-            finally
-            {
-                CloseConnection();
-            }
-        }
-
-        public int GetUserIdByEmail(string email)
-        {
-            int userId = -1; // Initialize userId to a default value
-
-            try
-            {
-                _connection.Open();
-
-                string query = @"
-                    SELECT Id FROM Users 
-                    WHERE Email = @Email;
-                ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@Email", email);
-
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            userId = reader.GetInt32("Id");
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-            return userId;
-        }
-        public List<Community> GetAllCommunities()
-        {
-            List<Community> communities = new List<Community>();
-
-            try
-            {
-                OpenConnection();
-
-                string query = @"
-            SELECT Id, Name, Bio FROM Communities;";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                using (MySqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        Community community = new Community
-                        {
-                            Id = reader.GetInt32("Id"),
-                            Name = reader.GetString("Name"),
-                            Bio = reader.GetString("Bio")
-                        };
-
-                        communities.Add(community);
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                CloseConnection();
-            }
-
-            return communities;
-        }
-
-        public void InsertMembershipRequest(int userId, int communityId)
-        {
-            try
-            {
-                OpenConnection();
-
-                string query = @"
-            INSERT INTO User_Community_Request (User_Id, Community_Id) 
-            VALUES (@UserId, @CommunityId);";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@UserId", userId);
-                    cmd.Parameters.AddWithValue("@CommunityId", communityId);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                CloseConnection();
-            }
-        }
-        public List<Post> GetPosts()
-        {
-            List<Post> posts = new List<Post>();
-
-            try
-            {
-                _connection.Open();
-
-                string query = @"
-            SELECT p.Id, p.Content, p.User_Id, u.Name AS UserName
-            FROM Posts p
-            INNER JOIN Users u ON p.User_Id = u.Id;
-        ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Post post = new Post
-                            {
-                                Id = reader.GetInt32("Id"),
-                                Content = reader.GetString("Content"),
-                                UserId = reader.GetInt32("User_Id"),
-                                UserName = reader.GetString("UserName")
-                            };
-
-                            posts.Add(post);
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-            return posts;
-        }
-
-        public void AddPost(string content, string title)
-        {
-            try
-            {
-                _connection.Open();
-                using (var cmd1 = new MySqlCommand("SET foreign_key_checks = 0;", _connection))
-                {
-                    cmd1.ExecuteNonQuery();
-                }
-
-                string query = @"
-                    INSERT INTO Posts (Content, Title, User_Id, PostTime, isNews, Community_Id)
-                    VALUES (@Content, @Title , @UserId, NOW(), 0, 1);
-                ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    int userId = GetUserIdFromSession();
-
-                    cmd.Parameters.AddWithValue("@Content", content);
-                    cmd.Parameters.AddWithValue("@Title", title);
-                    // You need to replace @UserId with the actual user ID of the logged-in user
-                    cmd.Parameters.AddWithValue("@UserId", userId); // Example user ID
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-        }
-
-        public int GetUserIdFromSession()
-        {
-            string userIdString = Preferences.Get("UserId", "-1"); // Default value is "-1" if key is not found
-            int userId;
-            if (int.TryParse(userIdString, out userId))
-            {
-                return userId;
+                return await response.Content.ReadAsStringAsync();
             }
             else
             {
-                // Handle the case where the string cannot be parsed to an integer
-                // For example, you might want to log an error or return a default value
-                return -1; // Return a default value
+                return "Error: " + response.StatusCode;
             }
         }
 
-        //---------------------------------------------------------------------------------
-
-        public List<PinData> GetPins()
+        // Community
+        public async Task<string> GetAllCommunities()
         {
-            List<PinData> pins = new List<PinData>();
-
-            try
-            {
-                _connection.Open();
-                string query = "SELECT * FROM Pins";
-                MySqlCommand cmd = new MySqlCommand(query, _connection);
-                using (MySqlDataReader reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        PinData pin = new PinData
-                        {
-                            Id = reader.GetInt32("Id"),
-                            UserId = reader.GetInt32("User_Id"),
-                            Title = reader.GetString("Title"),
-                            Description = reader.GetString("Description"),
-                            PostTime = reader.GetDateTime("PostTime"),
-                            XCoord = reader.GetDouble("X_cord"),
-                            YCoord = reader.GetDouble("Y_cord"),
-                            CommunityId = reader.GetInt32("Community_Id"),
-                            PinType = reader.GetInt32("PinType")
-                        };
-                        pins.Add(pin);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-            return pins;
+            return await GetRequest("");
         }
 
-        public void InsertPin(int userId, string title, string description, DateTime postTime, double xCoord, double yCoord, int communityId, int pinType)
+        public async Task<string> RequestMembership(int userId, int communityId)
         {
-            try
+            var requestBody = new { userId, communityId };
+            return await PostRequest("/Community/RequestMembership", requestBody);
+        }
+
+        // Help Posts
+        public async Task<string> GetHelpPosts()
+        {
+            return await GetRequest("/HelpPost/GetHelpPosts");
+        }
+
+        public async Task<string> AddHelpPost(int userId, string title, string description, double price, string telephone, DateTime helpPostTime)
+        {
+            var requestBody = new
             {
-                _connection.Open();
-                using (var cmd1 = new MySqlCommand("SET foreign_key_checks = 0;", _connection))
-                {
-                    cmd1.ExecuteNonQuery();
-                }
-                string query = "INSERT INTO Pins (User_Id, Title, Description, PostTime, X_cord, Y_cord, Community_Id, PinType) " +
-                               "VALUES (@UserId, @Title, @Description, @PostTime, @XCoord, @YCoord, @CommunityId, @PinType)";
-                MySqlCommand cmd = new MySqlCommand(query, _connection);
-                cmd.Parameters.AddWithValue("@UserId", userId);
-                cmd.Parameters.AddWithValue("@Title", title);
-                cmd.Parameters.AddWithValue("@Description", description);
-                cmd.Parameters.AddWithValue("@PostTime", postTime);
-                cmd.Parameters.AddWithValue("@XCoord", xCoord);
-                cmd.Parameters.AddWithValue("@YCoord", yCoord);
-                cmd.Parameters.AddWithValue("@CommunityId", communityId);
-                cmd.Parameters.AddWithValue("@PinType", pinType);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
+                title,
+                description,
+                price,
+                telephone,
+                helpposttime = helpPostTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                user_id = userId
+            };
+            return await PostRequest("/HelpPost/AddHelpPost", requestBody);
+        }
+
+        // Auth
+        public async Task<string> Login(string username, string password)
+        {
+            var requestBody = new { username, password };
+            string response = await PostRequest("/Login/Login", requestBody);
+
+            dynamic jsonResponse = JsonConvert.DeserializeObject(response);
+            if (jsonResponse != null && jsonResponse.token != null)
             {
-                Console.WriteLine("Error: " + ex.Message);
+                // Assuming the response contains a token (e.g., JWT)
+                string token = jsonResponse.token;
+                App.UserId = ExtractUserIdFromToken(token); // You'll need to implement this function based on your token structure
             }
-            finally
-            {
-                _connection.Close();
-            }
+
+            return response;
+        }
+
+        // Function to extract userId from a JWT or token
+        private int ExtractUserIdFromToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+            var userIdClaim = jsonToken?.Claims.FirstOrDefault(c => c.Type == "userId");
+
+            return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
         }
 
 
-
-        public class PinData
+        // Pins
+        public async Task<string> GetPins()
         {
-            public int Id { get; set; }
-            public int UserId { get; set; }
-            public string Title { get; set; }
-            public string Description { get; set; }
-            public DateTime PostTime { get; set; }
-            public double XCoord { get; set; }
-            public double YCoord { get; set; }
-            public int CommunityId { get; set; }
-            public int PinType { get; set; }
+            return await GetRequest("/Pins/GetPins");
         }
 
-
-
-        //---------------------------------------------------------------------------------
-
-        public User GetUserById(int userId)
+        public async Task<string> InsertPin(int userId, string title, string description, DateTime postTime, double x_cord, double y_cord, int communityId, int pinType)
         {
-            User user = null;
-
-            try
+            var requestBody = new
             {
-                _connection.Open();
-
-                string query = @"
-                    SELECT * FROM Users 
-                    WHERE Id = @UserId;
-                ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@UserId", userId);
-
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            user = new User
-                            {
-                                Id = reader.GetInt32("Id"),
-                                Name = reader.GetString("Name"),
-                                Email = reader.GetString("Email"),
-                                Bio = reader.GetString("Bio"),
-                                // Add other properties as needed
-                            };
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-            return user;
+                user_id = userId,
+                title,
+                description,
+                posttime = postTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                x_cord,
+                y_cord,
+                community_id = communityId,
+                pintype = pinType
+            };
+            return await PostRequest("/Pin/InsertPin", requestBody);
         }
 
-        public void UpdateUser(int userId, string newUsername, string newBio)
+        // Posts
+        public async Task<string> GetCommunityPosts(int isNews)
         {
-            try
-            {
-                OpenConnection();
-
-                string query = @"
-            UPDATE Users
-            SET Name = @NewUsername, Bio = @NewBio
-            WHERE Id = @UserId;
-        ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@NewUsername", newUsername);
-                    cmd.Parameters.AddWithValue("@NewBio", newBio);
-                    cmd.Parameters.AddWithValue("@UserId", userId);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            finally
-            {
-                CloseConnection();
-            }
+            return await GetRequest($"/Post/GetPosts/{isNews}");
         }
 
-
-        public class User
+        public async Task<string> CreatePost(int userId, string content, int isNews, int communityId)
         {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public string Email { get; set; }
-            public string Bio { get; set; }
-            // Add other properties as needed
+            var requestBody = new
+            {
+                content,
+                user_id = userId,
+                isnews = isNews,
+                community_id = communityId
+            };
+            return await PostRequest("/Post/CreatePost", requestBody);
         }
 
-        public List<Post> GetNormalPosts()
+        // User
+        public async Task<string> RegisterUser(string name, string email, string password, string bio)
         {
-            List<Post> posts = new List<Post>();
-
-            try
+            var requestBody = new
             {
-                _connection.Open();
-
-                string query = @"
-            SELECT p.Id, p.Content, p.User_Id, u.Name AS UserName
-            FROM Posts p
-            INNER JOIN Users u ON p.User_Id = u.Id WHERE p.isNews = 0;
-        ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Post post = new Post
-                            {
-                                Id = reader.GetInt32("Id"),
-                                Content = reader.GetString("Content"),
-                                UserId = reader.GetInt32("User_Id"),
-                                UserName = reader.GetString("UserName")
-                            };
-
-                            posts.Add(post);
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-            return posts;
+                name,
+                email,
+                password,
+                bio
+            };
+            return await PostRequest("/User/Register", requestBody);
         }
 
-        public List<Post> GetNewsPosts()
+        public async Task<string> UpdateUserBio(int userId, string newUsername, string newBio)
         {
-            List<Post> posts = new List<Post>();
-
-            try
-            {
-                _connection.Open();
-
-                string query = @"
-            SELECT p.Id, p.Title, p.Content, p.User_Id, p.PostTime, u.Name AS UserName
-            FROM Posts p
-            INNER JOIN Users u ON p.User_Id = u.Id
-            WHERE p.isNews = 1;
-        ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Post post = new Post
-                            {
-                                Id = reader.GetInt32("Id"),
-                                Title = reader.GetString("Title"),
-                                Content = reader.GetString("Content"),
-                                UserId = reader.GetInt32("User_Id"),
-                                UserName = reader.GetString("UserName"),
-                                PostTime = reader.GetDateTime("PostTime") // Add this line to set PostTime
-                            };
-
-                            posts.Add(post);
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-            return posts;
+            var requestBody = new { newUsername, newBio };
+            return await PutRequest($"/User/UpdateBio/{userId}", requestBody);
         }
 
-
-        public List<Post> GetUserPosts()
+        public async Task<string> GetUserById(int userId)
         {
-            List<Post> userPosts = new List<Post>();
-
-            try
-            {
-                OpenConnection();
-
-                string query = @"
-            SELECT p.Id, p.Title, p.Content, p.User_Id, p.PostTime, u.Name AS UserName
-            FROM Posts p
-            INNER JOIN Users u ON p.User_Id = u.Id
-            WHERE p.isNews = 0; -- Filter for user posts only
-        ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Post post = new Post
-                            {
-                                Id = reader.GetInt32("Id"),
-                                Title = reader.GetString("Title"),
-                                Content = reader.GetString("Content"),
-                                UserId = reader.GetInt32("User_Id"),
-                                UserName = reader.GetString("UserName"),
-                                PostTime = reader.GetDateTime("PostTime") // Add this line to set PostTime
-                            };
-
-                            userPosts.Add(post);
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                CloseConnection();
-            }
-
-            return userPosts;
+            return await GetRequest($"/User/{userId}");
         }
 
-
-        public List<HelpPosts> GetHelpPosts()
+        public async Task<string> DeleteUser(int userId)
         {
-            List<HelpPosts> helpposts = new List<HelpPosts>();
-
-            try
-            {
-                _connection.Open();
-
-                string query = @"
-            SELECT h.Id, h.Title ,h.Description, h.Price, h.Telephone, h.User_Id, u.Name AS UserName
-            FROM Help_posts h
-            INNER JOIN Users u ON h.User_Id = u.Id
-        ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            HelpPosts helppost = new HelpPosts
-                            {
-                                Id = reader.GetInt32("Id"),
-                                Title = reader.GetString("Title"),
-                                Description = reader.GetString("Description"),
-                                Price = reader.GetInt32("Price"),
-                                Telephone = reader.GetString("Telephone"),
-                                UserId = reader.GetInt32("User_Id"),
-                                UserName = reader.GetString("UserName")
-                            };
-
-                            helpposts.Add(helppost);
-                        }
-                    }
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-            return helpposts;
-        }
-
-        public void AddHelpPost(string title, string description, int price, string telephone)
-        {
-            try
-            {
-                _connection.Open();
-                using (var cmd1 = new MySqlCommand("SET foreign_key_checks = 0;", _connection))
-                {
-                    cmd1.ExecuteNonQuery();
-                }
-
-                string query = @"
-                    INSERT INTO help_posts (Title, Description, Price, Telephone, HelpPostTime, User_Id)
-                    VALUES (@Title, @Description, @Price, @Telephone, NOW(), @UserId);
-                ";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    int userId = GetUserIdFromSession();
-
-                    cmd.Parameters.AddWithValue("@Title", title);
-                    // You need to replace @UserId with the actual user ID of the logged-in user
-                    cmd.Parameters.AddWithValue("@Description", description);
-
-                    cmd.Parameters.AddWithValue("@Price", price);
-
-                    cmd.Parameters.AddWithValue("@Telephone", telephone);
-
-                    cmd.Parameters.AddWithValue("@UserId", userId);
-
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-                throw;
-            }
-            finally
-            {
-                _connection.Close();
-            }
-
-        }
-        public void DeleteHelpPost(int postId)
-        {
-            try
-            {
-                OpenConnection();
-
-                string query = "DELETE FROM Help_Posts WHERE Id = @PostId";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, _connection))
-                {
-                    cmd.Parameters.AddWithValue("@PostId", postId);
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
-            finally
-            {
-                CloseConnection();
-            }
+            return await DeleteRequest($"/User/UpdateBio/{userId}");
         }
 
     }

@@ -1,7 +1,6 @@
 using comApp.db;
-using System;
-using Microsoft.Maui.Controls;
 using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
 namespace comApp.posts
 {
@@ -17,30 +16,53 @@ namespace comApp.posts
             _dbConnection = new dbConnection();
             _newsPosts = new ObservableCollection<Post>();
             _userPosts = new ObservableCollection<Post>();
-            LoadNewsPosts();
-            LoadUserPosts();
         }
 
-        private void LoadNewsPosts()
+        protected override async void OnAppearing()
         {
-            var newsPostsFromDb = _dbConnection.GetNewsPosts();
-            _newsPosts.Clear();
-            foreach (var newsPost in newsPostsFromDb)
-            {
-                _newsPosts.Add(newsPost);
-            }
-            NewsPostsCollectionView.ItemsSource = _newsPosts;
+            base.OnAppearing();
+            await LoadNewsPosts();
+            await LoadUserPosts();
+            await CheckUser();
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
-        private void LoadUserPosts()
+        private async Task LoadNewsPosts()
         {
-            var userPostsFromDb = _dbConnection.GetUserPosts();
-            _userPosts.Clear();
-            foreach (var userPost in userPostsFromDb)
+            try
             {
-                _userPosts.Add(userPost);
+                string response = await _dbConnection.GetCommunityPosts(1);
+                var newsPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response);
+                _newsPosts.Clear();
+                foreach (var newsPost in newsPostsFromApi)
+                {
+                    _newsPosts.Add(newsPost);
+                }
+                NewsPostsCollectionView.ItemsSource = _newsPosts;
             }
-            UserPostsCollectionView.ItemsSource = _userPosts;
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to load news posts: {ex.Message}", "OK");
+            }
+        }
+
+        private async Task LoadUserPosts()
+        {
+            try
+            {
+                string response = await _dbConnection.GetCommunityPosts(0);
+                var userPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response);
+                _userPosts.Clear();
+                foreach (var userPost in userPostsFromApi)
+                {
+                    _userPosts.Add(userPost);
+                }
+                UserPostsCollectionView.ItemsSource = _userPosts;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to load user posts: {ex.Message}", "OK");
+            }
         }
 
         private async void OnCreatePostClicked(object sender, EventArgs e)
@@ -48,22 +70,20 @@ namespace comApp.posts
             await Navigation.PushAsync(new CreatePostPage());
         }
 
-        private async void CheckUser()
+        private async Task CheckUser()
         {
-            int userId = _dbConnection.GetUserIdFromSession();
-            if (userId < 0)
+            try
             {
-                await Shell.Current.GoToAsync("//LoginPage");
+                int userId = Preferences.Get("userId", -1);
+                if (userId < 0)
+                {
+                    await Shell.Current.GoToAsync("//LoginPage");
+                }
             }
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            LoadNewsPosts();
-            LoadUserPosts();
-            CheckUser();
-            NavigationPage.SetHasNavigationBar(this, false);
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to check user session: {ex.Message}", "OK");
+            }
         }
     }
 }
