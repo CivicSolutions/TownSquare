@@ -15,6 +15,7 @@ namespace comApp
         private dbConnection _dbConnection;
         private ObservableCollection<Pin> _pins;
         private CancellationTokenSource _cancellationTokenSource;
+        private string _lastResponse = string.Empty;
 
         public List<Pin> Pins { get; set; } = new List<Pin>();
 
@@ -32,8 +33,14 @@ namespace comApp
             try
             {
                 string response = await _dbConnection.GetPins();
-                var pinsFromDB = JsonConvert.DeserializeObject<List<PinData>>(response);
+                if (response == _lastResponse)
+                {
+                    return;
+                }
 
+                _lastResponse = response;
+
+                var pinsFromDB = JsonConvert.DeserializeObject<List<PinData>>(response);
                 if (pinsFromDB != null)
                 {
                     _pins.Clear();
