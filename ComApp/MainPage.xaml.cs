@@ -1,12 +1,7 @@
-﻿
-using comApp.db; // Assuming this is the namespace of your db class
+﻿using comApp.db;
 using Microsoft.Maui.Controls.Maps;
-using comApp.login;
-using Microsoft.Maui.Maps;
-using Microsoft.VisualBasic;
 using System.Collections.ObjectModel;
-using System.Net.NetworkInformation;
-using Map = Microsoft.Maui.Controls.Maps.Map;
+using Newtonsoft.Json;
 
 namespace comApp
 {
@@ -15,9 +10,7 @@ namespace comApp
         private dbConnection _dbConnection;
         private ObservableCollection<Pin> _pins;
 
-        int count = 0;
-
-        public List<Pin> Pins {  get; set; } = new List<Pin>();
+        public List<Pin> Pins { get; set; } = new List<Pin>();
 
         public MainPage()
         {
@@ -28,88 +21,64 @@ namespace comApp
             LoadPins();
         }
 
-
-      private void LoadPins()
+        private async void LoadPins()
         {
+            string response = await _dbConnection.GetPins();
+            var pinsFromDB = JsonConvert.DeserializeObject<List<PinData>>(response);
 
-            var pinsFromDB = _dbConnection.GetPins();
-
-            _pins.Clear();
-            foreach (var pin in pinsFromDB)
+            if (pinsFromDB != null)
             {
-
-                Pins.Add(new Pin
+                _pins.Clear();
+                foreach (var pin in pinsFromDB)
                 {
-                    Label = pin.Title,
-                    Address = pin.Description,
-                    Location = new Location(pin.XCoord, pin.YCoord)
-                }) ;
+                    Pins.Add(new Pin
+                    {
+                        Label = pin.Title,
+                        Address = pin.Description,
+                        Location = new Location(pin.XCoord, pin.YCoord)
+                    });
+                }
+                map.ItemsSource = Pins;
             }
-            map.ItemsSource = Pins;
-            
         }
 
         private async void CheckUser()
         {
-            int userId = _dbConnection.GetUserIdFromSession();
+            // Implement a session/user validation method in dbConnection
+            int userId = 1; // Example: Replace with actual session retrieval logic
 
             if (userId < 0)
             {
                 await Shell.Current.GoToAsync("//LoginPage");
             }
         }
-         
 
-
-        private void TestDatabaseConnection()
+        private async void TestDatabaseConnection()
         {
-            dbConnection database = new dbConnection();
-            if (database.TestConnection())
-            {
-                DisplayAlert("Success", "Connection to MySQL database successful!", "OK");
-            }
-            else
-            {
-                DisplayAlert("Error", "Connection to MySQL database failed.", "OK");
-            }
+            string response = await _dbConnection.GetAllCommunities();
+            await DisplayAlert("Database Test", response.Contains("Error") ? "Connection failed." : "Connection successful!", "OK");
         }
 
         private void ReloadPins()
         {
-            
             _pins.Clear();
             LoadPins();
         }
+
         protected override void OnAppearing()
         {
             ReloadPins();
             base.OnAppearing();
-            
             CheckUser();
             NavigationPage.SetHasNavigationBar(this, false);
         }
 
-
-        //protected override void OnMapReady(Map map)
-        //{
-
-        //    // Add custom overlay or styling here
-        //    // Example: Draw a polygon outline around a specific area
-        //    Polygon polygonOptions = new Polygon {
-        //        StrokeWidth = 8,
-        //        StrokeColor = Color.FromArgb("#1BA1E2"),
-        //        FillColor = Color.FromArgb("#881BA1E2"),
-        //        Geopath = {
-        //        new Location(47.01076501796103, 7.10304499774112),
-        //         new Location(47.010569568821865, 7.110334150593581),
-        //         new Location(47.00705771866243, 7.11415536689692),
-        //         new Location(47.00149596055266, 7.108850525371189),
-        //         new Location(46.99888714881887, 7.110041408161284),
-        //         new Location(46.99866564005672, 7.104123081456586),
-        //         new Location(46.99992084414791, 7.09744692028574),
-        //         new Location(47.00806664807105, 7.093874271870474)
-        //    }
-        //};
-
+        public class PinData
+        {
+            public string Title { get; set; }
+            public string Description { get; set; }
+            public double XCoord { get; set; }
+            public double YCoord { get; set; }
+        }
     }
 }

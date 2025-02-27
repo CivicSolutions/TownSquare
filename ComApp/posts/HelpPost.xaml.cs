@@ -1,10 +1,7 @@
 namespace comApp.posts;
 using Microsoft.Maui.Controls;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using comApp.db;
-using System.Collections.ObjectModel;
 public partial class HelpPost : ContentPage
 {
     private dbConnection _dbConnection;
@@ -150,8 +147,15 @@ public partial class HelpPost : ContentPage
 
             string telephone = telephoneEntry.Text;
 
-            _dbConnection.AddHelpPost(title, description, price, telephone);
-            await Navigation.PushAsync(new HelpPostsPage());
+            var response = await _dbConnection.AddHelpPost(App.UserId, title, description, price, telephone, DateTime.UtcNow);
+            if (response != null)
+            {
+                await Navigation.PushAsync(new HelpPostsPage());
+            }
+            else
+            {
+                await DisplayAlert("Error", "There was an issue creating the help post. Please try again.", "OK");
+            }
         }
     }
 
@@ -171,6 +175,7 @@ public partial class HelpPost : ContentPage
         }
         else { return false; }
     }
+
     protected override void OnAppearing()
     {
         base.OnAppearing();

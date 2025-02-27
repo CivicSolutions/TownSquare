@@ -1,11 +1,12 @@
 namespace comApp.account;
 using Microsoft.Maui.Controls;
 using comApp.db;
+using Newtonsoft.Json;
 
 public partial class EditSettingsPage : ContentPage
 {
-
     public dbConnection _dbConnection;
+
     public EditSettingsPage()
     {
         InitializeComponent();
@@ -26,6 +27,7 @@ public partial class EditSettingsPage : ContentPage
         BindingContext = this;
         LoadUser();
     }
+
     private async void OnCloseClicked()
     {
         bool result = await DisplayAlert("Close", "Are you sure you want to close?", "Yes", "No");
@@ -35,6 +37,7 @@ public partial class EditSettingsPage : ContentPage
             await Navigation.PopAsync();
         }
     }
+
     private void OnUsernameEntryTextChanged(object sender, TextChangedEventArgs e)
     {
         string newUsername = e.NewTextValue;
@@ -65,11 +68,12 @@ public partial class EditSettingsPage : ContentPage
         }
     }
 
-    private void LoadUser()
+    private async void LoadUser()
     {
-        int userId = _dbConnection.GetUserIdFromSession();
+        int userId = App.UserId;
 
-        var userData = _dbConnection.GetUserById(userId);
+        string response = await _dbConnection.GetUserById(userId);
+        dynamic userData = JsonConvert.DeserializeObject(response);
 
         BindingContext = userData;
     }
@@ -81,11 +85,15 @@ public partial class EditSettingsPage : ContentPage
         string newBio = bioEditor.Text;
 
         // Update the user data in the database
-        int userId = _dbConnection.GetUserIdFromSession();
-        _dbConnection.UpdateUser(userId, newUsername, newBio);
+        int userId = App.UserId;
+        string response = await _dbConnection.UpdateUserBio(userId, newUsername, newBio);
 
         // Navigate back to the previous page
+        if (!string.IsNullOrEmpty(response))
+        {
+            await DisplayAlert("Success", "User data updated successfully", "OK");
+        }
+
         await Navigation.PopAsync();
     }
-
 }

@@ -24,7 +24,7 @@
                             </Frame.GestureRecognizers>
                             <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="5">
                                 <Image Source="warning.png" WidthRequest="50" HeightRequest="50" Aspect="AspectFit" Margin="0, 20, 0, 0"/>
-                                <Label Text="Warning" FontSize="16" TextColor="#333322" HorizontalOptions="Center" Margin="0, 10, 0, 30"/>
+                                <Label Text="Warning" FontSize="16" TextColor="#000000" HorizontalOptions="Center" Margin="0, 10, 0, 30"/>
                             </StackLayout>
                         </Frame>
 
@@ -35,7 +35,7 @@
                             </Frame.GestureRecognizers>
                             <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="5">
                                 <Image Source="help.png" WidthRequest="50" HeightRequest="50" Aspect="AspectFit" Margin="0, 20, 0, 0"/>
-                                <Label Text="Help" FontSize="16" TextColor="#333322" HorizontalOptions="Center" Margin="0, 10, 0, 30"/>
+                                <Label Text="Help" FontSize="16" TextColor="#000000" HorizontalOptions="Center" Margin="0, 10, 0, 30"/>
                             </StackLayout>
                         </Frame>
                     </Grid>

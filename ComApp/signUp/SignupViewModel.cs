@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using comApp.db;
 using comApp.login;
 
@@ -15,32 +10,48 @@ namespace comApp.signUp
         public string Email { get; set; }
         public string Bio { get; set; }
         public string Password { get; set; }
-        public string confirmPassword {  get; set; }
+        public string ConfirmPassword { get; set; }
 
         public ICommand SignupCommand => new Command(Signup);
         private readonly INavigation _navigation;
+        private readonly dbConnection _dbConnection;
 
         public SignupViewModel(INavigation navigation)
         {
             _navigation = navigation;
+            _dbConnection = new dbConnection();
         }
+
         private async void Signup()
         {
-            dbConnection db = new dbConnection();
-            db.InsertUser(Name, Email, Bio, Password);
-            // Perform signup logic here
-            // For simplicity, let's assume signup is successful if all fields are not empty
-            if (!string.IsNullOrWhiteSpace(Name) && !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password))
+            if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Bio))
             {
-                // Perform database insertion here (using the provided insert query)
-                // Display a success message upon successful signup
-                await Application.Current.MainPage.DisplayAlert("Success", "Sign up successful", "OK");
-                await _navigation.PushAsync(new Login());
+                // Show error message to user
+                await Application.Current.MainPage.DisplayAlert("Error", "Please fill in all fields.", "OK");
+                return;
+            }
+
+            if (Password != ConfirmPassword)
+            {
+                // Show error if passwords don't match
+                await Application.Current.MainPage.DisplayAlert("Error", "Passwords do not match.", "OK");
+                return;
+            }
+
+            // Call the database method to register the user
+            var response = await _dbConnection.RegisterUser(Name, Email, Password, Bio);
+
+            // Handle the response
+            if (response.Contains("Error"))
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", response, "OK");
             }
             else
             {
-                await Application.Current.MainPage.DisplayAlert("Error", "Please fill in all fields", "OK");
+                await Application.Current.MainPage.DisplayAlert("Success", "You have registered successfully.", "OK");
+                await _navigation.PushAsync(new Login());
             }
         }
     }
+
 }
