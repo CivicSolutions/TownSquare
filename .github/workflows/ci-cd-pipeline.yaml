@@ -34,15 +34,3 @@ jobs:
 
       - name: Run Tests
         run: dotnet test --no-restore --verbosity normal
-        
-  deploy:
-    needs: [build-android]
-    runs-on: windows-latest
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Deploy to Server (Replace with actual deploy command)
-        run: echo "Deploying the app..."
