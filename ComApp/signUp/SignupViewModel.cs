@@ -12,7 +12,7 @@ namespace comApp.signUp
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
 
-        public ICommand SignupCommand => new Command(Signup);
+        public ICommand SignupCommand => new Command(async () => await Signup());  // Make sure the command executes the async method
         private readonly INavigation _navigation;
         private readonly dbConnection _dbConnection;
 
@@ -22,7 +22,7 @@ namespace comApp.signUp
             _dbConnection = new dbConnection();
         }
 
-        private async void Signup()
+        public async Task Signup()  // Change return type to Task
         {
             if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Bio))
             {
@@ -53,5 +53,6 @@ namespace comApp.signUp
             }
         }
     }
+
 
 }

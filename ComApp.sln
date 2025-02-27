@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComApp", "comApp\ComApp.csproj", "{9DC28A05-BD3B-4EE2-93D5-1B3B0F54CBAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{274E379E-51E5-463B-BAF7-165CA3A61333}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,10 @@ Global
 		{9DC28A05-BD3B-4EE2-93D5-1B3B0F54CBAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DC28A05-BD3B-4EE2-93D5-1B3B0F54CBAA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9DC28A05-BD3B-4EE2-93D5-1B3B0F54CBAA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{274E379E-51E5-463B-BAF7-165CA3A61333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{274E379E-51E5-463B-BAF7-165CA3A61333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{274E379E-51E5-463B-BAF7-165CA3A61333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{274E379E-51E5-463B-BAF7-165CA3A61333}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
