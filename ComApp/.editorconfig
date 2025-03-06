@@ -1,0 +1,4 @@
+# StyleCop rules
+[*.cs]
+# Enable all StyleCop rules
+dotnet_analyzer_diagnostic.severity = warning
