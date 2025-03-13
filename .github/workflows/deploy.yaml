@@ -26,7 +26,7 @@ jobs:
         run: dotnet restore
 
       - name: Publish Android APK (Unsigned)
-        run: dotnet publish -f net8.0-android -c Release --no-restore -p:AndroidPackageFormat=apk
+        run: dotnet publish ./ComApp/ComApp.csproj -f net8.0-android -c Release --no-restore -p:AndroidPackageFormat=apk
 
       - name: Find APK File
         id: find-apk
