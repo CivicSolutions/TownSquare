@@ -1,0 +1,47 @@
+name: Deploy Unsigned APK
+
+on:
+  workflow_dispatch:  # manual triggering in GitHub Actions
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-android:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install MAUI Workload
+        run: dotnet workload install maui
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Publish Android APK (Unsigned)
+        run: dotnet publish -f net8.0-android -c Release --no-restore -p:AndroidPackageFormat=apk
+
+      - name: Find APK File
+        id: find-apk
+        shell: pwsh
+        run: |
+          $apkPath = Get-ChildItem -Path $Env:GITHUB_WORKSPACE -Recurse -Filter "*.apk" | Select-Object -ExpandProperty FullName
+          if ($apkPath) {
+            echo "APK_PATH=$apkPath" | Out-File -FilePath $env:GITHUB_ENV -Append
+          } else {
+            Write-Error "APK file not found!"
+            exit 1
+          }
+
+      - name: Upload Unsigned APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unsigned-APK
+          path: ${{ env.APK_PATH }}

@@ -1,15 +1,19 @@
-namespace comApp.signUp;
-using comApp.login;
-public partial class signUpPage : ContentPage
+using comApp.signUp;
+using Microsoft.Maui.Controls;
+
+namespace comApp.signUp
 {
-	public signUpPage()
-	{
-		InitializeComponent();
-        BindingContext = new SignupViewModel(Navigation);
-        NavigationPage.SetHasBackButton(this, false);
-    }
-    private async void OnLoginButtonClicked(object sender, EventArgs e)
+    public partial class signUpPage : ContentPage
     {
-        await Navigation.PushAsync(new Login());
+        public signUpPage()
+        {
+            InitializeComponent();
+            BindingContext = new SignupViewModel(Navigation, this); // Pass 'this' as the Page
+        }
+
+        private async void OnLoginButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new login.Login()); // Navigate to login page
+        }
     }
 }
