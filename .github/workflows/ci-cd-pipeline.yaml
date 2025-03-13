@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-      - development
   pull_request:
     branches:
       - main
-      - development
 
 jobs:
   build-android:
@@ -30,7 +28,7 @@ jobs:
         run: dotnet restore
 
       - name: Build Android
-        run: dotnet build -f net8.0-android --no-restore --configuration Release
+        run: dotnet build -f net8.0-android --no-restore --configuration Release --warnaserror
 
       - name: Run Tests
         run: dotnet test --no-restore --verbosity normal
