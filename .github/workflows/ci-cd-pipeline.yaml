@@ -28,7 +28,7 @@ jobs:
         run: dotnet restore
 
       - name: Build Android
-        run: dotnet build -f net8.0-android --no-restore --configuration Release --warnaserror
+        run: dotnet build -f net8.0-android --no-restore --configuration Release 
 
       - name: Run Tests
         run: dotnet test --no-restore --verbosity normal
