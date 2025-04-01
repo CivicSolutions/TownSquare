@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using comApp.db;
+﻿using comApp.db;
 using Microsoft.Maui.Controls.Maps;
-using Microsoft.Maui.Devices.Sensors;
+using System.Collections.ObjectModel;
+using Newtonsoft.Json;
 
 namespace comApp
 {
@@ -14,8 +9,6 @@ namespace comApp
     {
         private dbConnection _dbConnection;
         private ObservableCollection<Pin> _pins;
-        private CancellationTokenSource _cancellationTokenSource;
-        private string _lastResponse = string.Empty;
 
         public List<Pin> Pins { get; set; } = new List<Pin>();
 
@@ -30,74 +23,54 @@ namespace comApp
 
         private async void LoadPins()
         {
-            try
+            string response = await _dbConnection.GetPins();
+            var pinsFromDB = JsonConvert.DeserializeObject<List<PinData>>(response);
+
+            if (pinsFromDB != null)
             {
-                string response = await _dbConnection.GetPins();
-                if (response == _lastResponse)
+                _pins.Clear();
+                foreach (var pin in pinsFromDB)
                 {
-                    return;
-                }
-
-                _lastResponse = response;
-
-                var pinsFromDB = JsonConvert.DeserializeObject<List<PinData>>(response);
-                if (pinsFromDB != null)
-                {
-                    _pins.Clear();
-                    Pins.Clear();
-
-                    foreach (var pin in pinsFromDB)
+                    Pins.Add(new Pin
                     {
-                        Pins.Add(new Pin
-                        {
-                            Label = pin.Title,
-                            Address = pin.Description,
-                            Location = new Location(pin.XCoord, pin.YCoord)
-                        });
-                    }
-
-                    map.ItemsSource = null; // Force refresh
-                    map.ItemsSource = Pins;
+                        Label = pin.Title,
+                        Address = pin.Description,
+                        Location = new Location(pin.XCoord, pin.YCoord)
+                    });
                 }
+                map.ItemsSource = Pins;
             }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Error", "Failed to load map pins: " + ex.Message, "OK");
-            }
-        }
-
-        private async Task RefreshPinsLoop(CancellationToken token)
-        {
-            while (!token.IsCancellationRequested)
-            {
-                LoadPins();
-                await Task.Delay(TimeSpan.FromSeconds(60), token);
-            }
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            CheckUser();
-            NavigationPage.SetHasNavigationBar(this, false);
-
-            _cancellationTokenSource = new CancellationTokenSource();
-            Task.Run(() => RefreshPinsLoop(_cancellationTokenSource.Token));
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-            _cancellationTokenSource?.Cancel();
         }
 
         private async void CheckUser()
         {
-            int userId = App.UserId;
+            // Implement a session/user validation method in dbConnection
+            int userId = 1; // Example: Replace with actual session retrieval logic
+
             if (userId < 0)
             {
                 await Shell.Current.GoToAsync("//LoginPage");
             }
+        }
+
+        private async void TestDatabaseConnection()
+        {
+            string response = await _dbConnection.GetAllCommunities();
+            await DisplayAlert("Database Test", response.Contains("Error") ? "Connection failed." : "Connection successful!", "OK");
+        }
+
+        private void ReloadPins()
+        {
+            _pins.Clear();
+            LoadPins();
+        }
+
+        protected override void OnAppearing()
+        {
+            ReloadPins();
+            base.OnAppearing();
+            CheckUser();
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         public class PinData
