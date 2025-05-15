@@ -1,200 +1,186 @@
-﻿using MySqlConnector;
-using System.Text;
+﻿using System.Text;
+using System.Net.Http;
 using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 
 namespace comApp.db
 {
     public class dbConnection
     {
-        private MySqlConnection _connection;
         private readonly HttpClient _httpClient;
-        private readonly string _baseUrl = "https://townsquareapi.onrender.com/api";
+        private readonly string _baseUrl = "http://mc.dominikmeister.com/api";
 
         public dbConnection()
         {
-            string connectionString = "server=10.0.2.2;port=3306;database=comapp;user=root;password=sml12345";
-
-            _connection = new MySqlConnection(connectionString);
-
-            _httpClient = new HttpClient();
+            var handler = new HttpClientHandler()
+            {
+                AllowAutoRedirect = true
+            };
+            _httpClient = new HttpClient(handler);
         }
 
-        // Helper method for GET requestss
-        public async Task<string> GetRequest(string endpoint)
+        private async Task<string> GetRequest(string endpoint)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(_baseUrl + endpoint);
             return await HandleResponse(response);
         }
 
-        // Helper method for POST requests
-        public async Task<string> PostRequest(string endpoint, object requestBody)
+        private async Task<string> PostRequest(string endpoint, object requestBody)
         {
             string jsonContent = JsonConvert.SerializeObject(requestBody);
             StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _httpClient.PostAsync(_baseUrl + endpoint, content);
+            return await HandleResponse(response);
+        }
 
+        private async Task<string> PutRequest(string endpoint, object requestBody)
+        {
+            string jsonContent = JsonConvert.SerializeObject(requestBody);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _httpClient.PutAsync(_baseUrl + endpoint, content);
             return await HandleResponse(response);
         }
 
-        // Helper method for PUT requests
-        public async Task<string> PutRequest(string endpoint, object requestBody)
-        {
-            string jsonContent = JsonConvert.SerializeObject(requestBody);
-            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await _httpClient.PutAsync(_baseUrl + endpoint, content);
-            return await HandleResponse(response);
-        }
-
-        // Helper method for Delete requests
-        public async Task<string> DeleteRequest(string endpoint)
+        private async Task<string> DeleteRequest(string endpoint)
         {
             HttpResponseMessage response = await _httpClient.DeleteAsync(_baseUrl + endpoint);
             return await HandleResponse(response);
         }
 
-        // handle the response and return it as a string
-        public async Task<string> HandleResponse(HttpResponseMessage response)
+        private static async Task<string> HandleResponse(HttpResponseMessage response)
         {
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                return "Error: " + response.StatusCode;
-            }
+            return response.IsSuccessStatusCode
+                ? await response.Content.ReadAsStringAsync()
+                : $"Error: {response.StatusCode} - {await response.Content.ReadAsStringAsync()}";
         }
 
-        // Community
-        public async Task<string> GetAllCommunities()
+        // -------------------------------
+        // COMMUNITY
+        // -------------------------------
+
+        public Task<string> GetAllCommunities() => GetRequest("/Community/GetAll");
+
+        public Task<string> GetCommunityById(int id) => GetRequest($"/Community/GetById/{id}");
+
+        public Task<string> GetCommunityByName(string name) => GetRequest($"/Community/GetByName?name={name}");
+
+        public Task<string> CreateCommunity(string name, string description, string location, bool isLicensed)
         {
-            return await GetRequest("");
+            var body = new { name, description, location, isLicensed };
+            return PostRequest("/Community/Create", body);
         }
 
-        public async Task<string> RequestMembership(int userId, int communityId)
+        public Task<string> UpdateCommunity(int communityId, string name, string description, string location, bool isLicensed)
         {
-            var requestBody = new { userId, communityId };
-            return await PostRequest("/Community/RequestMembership", requestBody);
+            var body = new { name, description, location, isLicensed };
+            return PutRequest($"/Community/Update/{communityId}", body);
         }
 
-        // Help Posts
-        public async Task<string> GetHelpPosts()
+        public Task<string> DeleteCommunity(int communityId) => DeleteRequest($"/Community/Delete/{communityId}");
+
+        public Task<string> RequestMembership(int userId, int communityId)
         {
-            return await GetRequest("/HelpPost/GetHelpPosts");
+            return PutRequest($"/Community/RequestMembership?userId={userId}&communityId={communityId}", null);
         }
 
-        public async Task<string> AddHelpPost(int userId, string title, string description, double price, string telephone, DateTime helpPostTime)
+        // -------------------------------
+        // HELP POST
+        // -------------------------------
+
+        public Task<string> GetHelpPosts() => GetRequest("/HelpPost/GetHelpPosts");
+
+        public Task<string> AddHelpPost(string title, string description, double price, string telephone, DateTime postedAt, int userId)
         {
-            var requestBody = new
-            {
-                title,
-                description,
-                price,
-                telephone,
-                helpposttime = helpPostTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                user_id = userId
-            };
-            return await PostRequest("/HelpPost/AddHelpPost", requestBody);
+            var body = new { title, description, price, telephone, postedAt, userId };
+            return PostRequest("/HelpPost/AddHelpPost", body);
         }
 
-        // Auth
-        public async Task<string> Login(string username, string password)
+        // -------------------------------
+        // LOGIN
+        // -------------------------------
+
+        public Task<string> Login(string username, string password)
         {
-            var requestBody = new { username, password };
-            string response = await PostRequest("/Login/Login", requestBody);
-
-            dynamic jsonResponse = JsonConvert.DeserializeObject(response);
-            if (jsonResponse != null && jsonResponse.token != null)
-            {
-                // Assuming the response contains a token (e.g., JWT)
-                string token = jsonResponse.token;
-                App.UserId = ExtractUserIdFromToken(token); // You'll need to implement this function based on your token structure
-            }
-
-            return response;
+            var body = new { username, password };
+            return PostRequest("/Login/Login", body);
         }
 
-        // Function to extract userId from a JWT or token
-        private int ExtractUserIdFromToken(string token)
-        {
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
-            var userIdClaim = jsonToken?.Claims.FirstOrDefault(c => c.Type == "userId");
+        // -------------------------------
+        // PIN
+        // -------------------------------
 
-            return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
+        public Task<string> GetAllPins(int communityId) => GetRequest($"/Pin/GetAll?communityId={communityId}");
+
+        public Task<string> GetPinById(int communityId, int id) =>
+            GetRequest($"/Pin/GetById?communityId={communityId}&id={id}");
+
+        public Task<string> CreatePin(string title, string description, double xCord, double yCord, int communityId, int pintype)
+        {
+            var body = new { title, description, xCord, yCord, communityId, pintype };
+            return PostRequest("/Pin", body);
         }
 
-
-        // Pins
-        public async Task<string> GetPins()
+        public Task<string> UpdatePin(int communityId, int pinId, string title, string description, int xCord, int yCord, int pintype)
         {
-            return await GetRequest("/Pins/GetPins");
+            var body = new { title, description, xCord, yCord, communityId, pintype };
+            return PutRequest($"/Pin?communityId={communityId}&pinId={pinId}", body);
         }
 
-        public async Task<string> InsertPin(int userId, string title, string description, DateTime postTime, double x_cord, double y_cord, int communityId, int pinType)
+        public Task<string> DeletePin(int communityId, int pinId) =>
+            DeleteRequest($"/Pin?communityId={communityId}&pinId={pinId}");
+
+        // -------------------------------
+        // POST
+        // -------------------------------
+
+        public Task<string> GetAllPosts(int communityId) =>
+            GetRequest($"/Post/GetAll?communityId={communityId}");
+
+        public Task<string> GetPostById(int communityId, int id) =>
+            GetRequest($"/Post/GetById?communityId={communityId}&id={id}");
+
+        public Task<string> CreatePost(string content, int isNews, int communityId)
         {
-            var requestBody = new
-            {
-                user_id = userId,
-                title,
-                description,
-                posttime = postTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                x_cord,
-                y_cord,
-                community_id = communityId,
-                pintype = pinType
-            };
-            return await PostRequest("/Pin/InsertPin", requestBody);
+            var body = new { content, isNews, communityId };
+            return PostRequest("/Post", body);
         }
 
-        // Posts
-        public async Task<string> GetCommunityPosts(int isNews)
+        public Task<string> UpdatePost(int communityId, int postId, string content, int isNews)
         {
-            return await GetRequest($"/Post/GetPosts/{isNews}");
+            var body = new { content, isNews, communityId };
+            return PutRequest($"/Post?communityId={communityId}&postId={postId}", body);
         }
 
-        public async Task<string> CreatePost(int userId, string content, int isNews, int communityId)
+        public Task<string> DeletePost(int communityId, int postId) =>
+            DeleteRequest($"/Post?communityId={communityId}&postId={postId}");
+
+        // -------------------------------
+        // USER
+        // -------------------------------
+
+        public Task<string> RegisterUser(string name, string email, string password, string description)
         {
-            var requestBody = new
-            {
-                content,
-                user_id = userId,
-                isnews = isNews,
-                community_id = communityId
-            };
-            return await PostRequest("/Post/CreatePost", requestBody);
+            var body = new { name, email, password, description };
+            return PostRequest("/User/Register", body);
         }
 
-        // User
-        public async Task<string> RegisterUser(string name, string email, string password, string bio)
+        public Task<string> LoginUser(string email, string password)
         {
-            var requestBody = new
-            {
-                name,
-                email,
-                password,
-                bio
-            };
-            return await PostRequest("/User/Register", requestBody);
+            var body = new { email, password };
+            return PostRequest("/User/Login", body);
         }
 
-        public async Task<string> UpdateUserBio(int userId, string newUsername, string newBio)
+        public Task<string> GetUserById(int userId) => GetRequest($"/User/GetById/{userId}");
+
+        // public Task<string> GetUserBySessionToken(string sessionToken) => GetRequest($"/User/GetByToken/{sessionToken}");
+
+        // public Task<string> ValidateSessionToken(string sessionToken) => GetRequest($"/User/Validate/{sessionToken}");
+        public Task<string> UpdateUser(int userId, string email, string password, string name, string description)
         {
-            var requestBody = new { newUsername, newBio };
-            return await PutRequest($"/User/UpdateBio/{userId}", requestBody);
+            var body = new { email, password, name, description };
+            return PutRequest($"/User/Update/{userId}", body);
         }
 
-        public async Task<string> GetUserById(int userId)
-        {
-            return await GetRequest($"/User/{userId}");
-        }
-
-        public async Task<string> DeleteUser(int userId)
-        {
-            return await DeleteRequest($"/User/UpdateBio/{userId}");
-        }
-
+        public Task<string> DeleteUser(int userId) => DeleteRequest($"/User/DeleteUser/{userId}");
     }
 }

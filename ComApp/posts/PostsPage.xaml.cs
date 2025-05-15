@@ -31,7 +31,7 @@ namespace comApp.posts
         {
             try
             {
-                string response = await _dbConnection.GetCommunityPosts(1);
+                string response = await _dbConnection.GetAllPosts(1);
                 var newsPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response);
                 _newsPosts.Clear();
                 foreach (var newsPost in newsPostsFromApi)
@@ -50,7 +50,7 @@ namespace comApp.posts
         {
             try
             {
-                string response = await _dbConnection.GetCommunityPosts(0);
+                string response = await _dbConnection.GetAllPosts(0);
                 var userPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response);
                 _userPosts.Clear();
                 foreach (var userPost in userPostsFromApi)

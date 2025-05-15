@@ -131,7 +131,7 @@ public partial class WarningPin : ContentPage
 
         try
         {
-            await _dbConnection.InsertPin(1, title, description, DateTime.Now, location.Latitude, location.Longitude, 1, 2);
+            await _dbConnection.CreatePin(title, description, (double)location.Latitude, (double)location.Longitude, 1, 2); //hardcoded communityid for now
             string message = "Pin added successfully \u2714";
             await DisplayAlert("Success", message, "OK");
             await Navigation.PopAsync();

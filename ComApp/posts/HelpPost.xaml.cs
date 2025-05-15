@@ -138,16 +138,17 @@ public partial class HelpPost : ContentPage
 
         else
         {
+            int userId = App.UserId;
+            Console.WriteLine("YOU ARE USING FOLLOWING USER ID: " + userId);
             string title = titleEntry.Text;
             string description = descriptionEditor.Text;
-
             string InputPrice = priceEntry.Text;
             int price;
             int.TryParse(InputPrice, out price);
-
+            DateTime postedAt = DateTime.UtcNow;
             string telephone = telephoneEntry.Text;
 
-            var response = await _dbConnection.AddHelpPost(App.UserId, title, description, price, telephone, DateTime.UtcNow);
+            var response = await _dbConnection.AddHelpPost(title, description, price, telephone, postedAt, userId);
             if (response != null)
             {
                 await Navigation.PushAsync(new HelpPostsPage());

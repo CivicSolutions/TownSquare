@@ -42,7 +42,6 @@ public partial class EditSettingsPage : ContentPage
     {
         string newUsername = e.NewTextValue;
 
-        // Error handling for username length constraint
         if (newUsername.Length > 40)
         {
             usernameErrorLabel.Text = "Username must be maximum 40 characters long";
@@ -57,7 +56,6 @@ public partial class EditSettingsPage : ContentPage
     {
         string newBio = e.NewTextValue;
 
-        // Error handling for bio length constraint
         if (newBio.Length > 200)
         {
             bioErrorLabel.Text = "Bio must be maximum 200 characters long";
@@ -80,20 +78,27 @@ public partial class EditSettingsPage : ContentPage
 
     private async void OnSaveChangesClicked(object sender, EventArgs e)
     {
-        // Get the new username and bio from the UI
         string newUsername = usernameEntry.Text;
         string newBio = bioEditor.Text;
-
-        // Update the user data in the database
         int userId = App.UserId;
-        string response = await _dbConnection.UpdateUserBio(userId, newUsername, newBio);
 
-        // Navigate back to the previous page
+        // Get current user data to keep email and password unchanged
+        string currentUserResponse = await _dbConnection.GetUserById(userId);
+        dynamic userData = JsonConvert.DeserializeObject(currentUserResponse);
+        string email = userData.email;
+        string password = userData.password;
+
+        // Update user with all required fields
+        string response = await _dbConnection.UpdateUser(userId, (string)email, (string)password, newUsername, newBio);
+
         if (!string.IsNullOrEmpty(response))
         {
             await DisplayAlert("Success", "User data updated successfully", "OK");
+            await Navigation.PopAsync();
         }
-
-        await Navigation.PopAsync();
+        else
+        {
+            await DisplayAlert("Error", "Failed to update user data", "OK");
+        }
     }
 }

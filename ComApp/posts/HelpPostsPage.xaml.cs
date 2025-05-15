@@ -14,7 +14,7 @@ public partial class HelpPostsPage : ContentPage
         _dbConnection = new dbConnection();
         _helpposts = new ObservableCollection<HelpPosts>();
         LoadPosts();
-        CheckUser();
+        // CheckUser();
     }
 
     private async void LoadPosts()
@@ -38,32 +38,32 @@ public partial class HelpPostsPage : ContentPage
         await Navigation.PushAsync(new HelpPost());
     }
 
-    private async void CheckUser()
-    {
-        int userId = await GetUserIdFromSession();
+    //private async void CheckUser()
+    //{
+    //    int userId = await GetUserIdFromSession();
 
-        if (userId < 0)
-        {
-            await Shell.Current.GoToAsync("//LoginPage");
-        }
-    }
+    //    if (userId < 0)
+    //    {
+    //        await Shell.Current.GoToAsync("//LoginPage");
+    //    }
+    //}
 
-    private async Task<int> GetUserIdFromSession()
-    {
-        string response = await _dbConnection.GetRequest("/User/GetUserId");
-        if (int.TryParse(response, out int userId))
-        {
-            return userId;
-        }
-        return -1;
-    }
+    //private async Task<int> GetUserIdFromSession()
+    //{
+    //    string response = await _dbConnection.GetUserById(userId: App.UserId);
+    //    if (int.TryParse(response, out int userId))
+    //    {
+    //        return userId;
+    //    }
+    //    return -1;
+    //}
 
     private async void OnAcceptButtonClicked(object sender, EventArgs e)
     {
         var button = (Button)sender;
         var selectedHelpPost = (HelpPosts)button.BindingContext;
 
-        int loggedInUserId = await GetUserIdFromSession();
+        int loggedInUserId = App.UserId;
 
         if (selectedHelpPost.UserId == loggedInUserId)
         {
@@ -81,7 +81,7 @@ public partial class HelpPostsPage : ContentPage
 
         if (accept)
         {
-            await _dbConnection.DeleteRequest($"/HelpPost/DeleteHelpPost/{selectedHelpPost.Id}");
+            // await _dbConnection.DeletePost($"/HelpPost/DeleteHelpPost/{selectedHelpPost.Id}");
             LoadPosts();
         }
     }
@@ -89,7 +89,7 @@ public partial class HelpPostsPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        CheckUser();
+        // CheckUser();
         NavigationPage.SetHasNavigationBar(this, false);
     }
 }

@@ -23,12 +23,15 @@ namespace comApp
 
         private async void LoadPins()
         {
-            string response = await _dbConnection.GetPins();
+            int communityId = 1; // TODO: Replace with actual community ID logic
+            string response = await _dbConnection.GetAllPins(communityId);
             var pinsFromDB = JsonConvert.DeserializeObject<List<PinData>>(response);
 
             if (pinsFromDB != null)
             {
                 _pins.Clear();
+                Pins.Clear();
+
                 foreach (var pin in pinsFromDB)
                 {
                     Pins.Add(new Pin
@@ -38,9 +41,11 @@ namespace comApp
                         Location = new Location(pin.XCoord, pin.YCoord)
                     });
                 }
+
                 map.ItemsSource = Pins;
             }
         }
+
 
         private async void CheckUser()
         {

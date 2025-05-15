@@ -12,15 +12,15 @@
             <Label Text="Email" />
             <Entry Text="{Binding Email}" WidthRequest="250" Placeholder="Enter your email" />
 
-            <Label Text="Bio" />
-            <Entry Text="{Binding Bio}" WidthRequest="250" HeightRequest="75" Placeholder="Enter your bio" />
+            <Label Text="Description" />
+            <Entry Text="{Binding Description}" WidthRequest="250" HeightRequest="75" Placeholder="Enter your description" />
 
             <Label Text="Password" />
             <Entry Text="{Binding Password}" WidthRequest="250" Placeholder="Enter your password" IsPassword="True" />
 
-            <!--<Label Text="Confirm Password" />
-        <Entry Text="{Binding confirmPassword}" WidthRequest="250" Placeholder="Confirm your password" IsPassword="True" />-->
-
+            <Label Text="Confirm Password" />
+            <Entry Text="{Binding ConfirmPassword}" WidthRequest="250" Placeholder="Confirm your password" IsPassword="True" />
+            
             <Button Text="Register" Command="{Binding SignupCommand}" Margin="0, 5, 0, 5" Style="{StaticResource GreyButtonStyle}"/>
             <Button Text="Login" Clicked="OnLoginButtonClicked" Style="{StaticResource GreyButtonStyle}"/>
         </StackLayout>

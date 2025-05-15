@@ -66,15 +66,14 @@ namespace comApp.posts
 
         private async void OnSubmitPostClicked(object sender, EventArgs e)
         {
-            string title = titleEntry.Text; // Corrected from TitleEntry
-            string content = contentEditor.Text; // Corrected from ContentEntry
+            string title = titleEntry.Text;
+            string content = contentEditor.Text;
 
             if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(content) && content.Length >= 50 && content.Length <= 600)
             {
-                // Assuming the userId is available through some mechanism (e.g., a logged-in user)
-                int userId = App.UserId; // Replace with actual user ID
-
-                string response = await _dbConnection.CreatePost(userId, content, 0, 0); // Adjust parameters accordingly
+                int userId = App.UserId;
+                int isNews = 0; // false for now, we need to implement Roles
+                string response = await _dbConnection.CreatePost(content, isNews, 1); // communityid hardcoded for now
                 if (response.Contains("Error"))
                 {
                     await DisplayAlert("Error", "Failed to add post", "OK");
