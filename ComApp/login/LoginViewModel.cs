@@ -2,7 +2,6 @@
 using comApp.db;
 using System.Text.Json;
 
-
 namespace comApp.login
 {
     public class LoginViewModel
@@ -18,7 +17,7 @@ namespace comApp.login
         public LoginViewModel(INavigation navigation)
         {
             _navigation = navigation;
-            _dbConnection = new dbConnection(); // Corrected constructor call
+            _dbConnection = new dbConnection();
         }
 
         private async void Login()
@@ -31,15 +30,20 @@ namespace comApp.login
 
             var response = await _dbConnection.LoginUser(Email, Password);
 
-            if (response.Contains("Error"))
+            if (response == null || !response.IsSuccess)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", response, "OK");
+                string message = response == null
+                    ? "Login failed. Please try again."
+                    : response.StatusCode == 401
+                        ? "Invalid email or password."
+                        : $"Login failed: {response.ErrorMessage}";
+                await Application.Current.MainPage.DisplayAlert("Error", message, "OK");
                 return;
             }
 
             try
             {
-                var jsonDoc = JsonDocument.Parse(response);
+                var jsonDoc = JsonDocument.Parse(response.Content);
                 JsonElement root = jsonDoc.RootElement;
 
                 // Extract session ID
@@ -68,6 +72,5 @@ namespace comApp.login
                 await Application.Current.MainPage.DisplayAlert("Error", $"Failed to parse response: {ex.Message}", "OK");
             }
         }
-
     }
 }

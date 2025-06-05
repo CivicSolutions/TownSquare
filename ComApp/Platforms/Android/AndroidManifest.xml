@@ -7,7 +7,7 @@
         android:label="ComApp"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true">
-		<meta-data android:name="com.google.android.geo.API_KEY" android:value="APIKEYGOESHERE" />
+		<meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCdD1j1KebQBuXgNzo7YWUbYDPqh1veTX8" />
 	</application>
 
 	<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />

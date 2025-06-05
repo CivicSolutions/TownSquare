@@ -4,7 +4,7 @@ using comApp.db;
 
 public partial class CreatePins : ContentPage
 {
-    public dbConnection _dbConnection;
+    private dbConnection _dbConnection;
 
     public CreatePins()
     {

@@ -25,10 +25,22 @@ namespace comApp.communities
         private async void LoadCommunities()
         {
             dbConnection db = new dbConnection();
-            string response = await db.GetAllCommunities();
-            // Assuming you need to parse response into a collection of Community objects
-            var communityList = JsonConvert.DeserializeObject<List<Community>>(response);
-            Communities = new ObservableCollection<Community>(communityList);
+            var response = await db.GetAllCommunities();
+
+            if (response == null || !response.IsSuccess)
+            {
+                string message = response == null
+                    ? "Failed to load communities."
+                    : response.StatusCode == 401
+                        ? "You are not authorized to view communities."
+                        : $"Failed to load communities: {response.ErrorMessage}";
+                await Application.Current.MainPage.DisplayAlert("Error", message, "OK");
+                Communities = new ObservableCollection<Community>();
+                return;
+            }
+
+            var communityList = JsonConvert.DeserializeObject<List<Community>>(response.Content);
+            Communities = new ObservableCollection<Community>(communityList ?? new List<Community>());
         }
 
         private async void RequestMembership(int communityId)
@@ -40,20 +52,24 @@ namespace comApp.communities
                 dbConnection db = new dbConnection();
                 var response = await db.RequestMembership(userId, communityId);
 
-                // Check the response for success
-                if (response.Contains("Error"))
+                if (response == null || !response.IsSuccess)
                 {
-                    Application.Current.MainPage.DisplayAlert("Error", response, "OK");
+                    string message = response == null
+                        ? "Failed to request membership."
+                        : response.StatusCode == 401
+                            ? "You are not authorized to request membership."
+                            : $"Failed to request membership: {response.ErrorMessage}";
+                    await Application.Current.MainPage.DisplayAlert("Error", message, "OK");
                 }
                 else
                 {
                     LoadCommunities();
-                    Application.Current.MainPage.DisplayAlert("Success", "Membership requested successfully", "OK");
+                    await Application.Current.MainPage.DisplayAlert("Success", "Membership requested successfully", "OK");
                 }
             }
             else
             {
-                Application.Current.MainPage.DisplayAlert("Error", "User ID not available", "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", "User ID not available", "OK");
             }
         }
 

@@ -1,9 +1,7 @@
-namespace comApp.posts;
 using comApp.db;
-
 using MySqlConnector;
-using Xamarin.Essentials;
 
+namespace comApp.posts;
 public partial class HelpPin : ContentPage
 {
     private dbConnection _dbConnection;
@@ -132,10 +130,30 @@ public partial class HelpPin : ContentPage
 
         try
         {
-            await _dbConnection.CreatePin(title, description, (double)location.Latitude, (double)location.Longitude, 1, 1); // communityid hardcoded for now
-            string message = "Pin added successfully \u2714";
-            await DisplayAlert("Success", message, "OK");
-            await Navigation.PopAsync();
+            var response = await _dbConnection.CreatePin(
+                title,
+                description,
+                (double)location.Latitude,
+                (double)location.Longitude,
+                1, // hardcoded communityid for now
+                1  // pintype for help
+            );
+
+            if (response == null || !response.IsSuccess)
+            {
+                string message = response == null
+                    ? "An error occurred while adding the pin."
+                    : response.StatusCode == 401
+                        ? "You are not authorized to add a pin."
+                        : $"An error occurred: {response.ErrorMessage}";
+                await DisplayAlert("Error", message, "OK");
+            }
+            else
+            {
+                string message = "Pin added successfully \u2714";
+                await DisplayAlert("Success", message, "OK");
+                await Navigation.PopAsync();
+            }
         }
         catch (MySqlException ex)
         {

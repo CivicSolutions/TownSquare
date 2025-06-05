@@ -31,12 +31,25 @@ namespace comApp.posts
         {
             try
             {
-                string response = await _dbConnection.GetAllPosts(1);
-                var newsPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response);
-                _newsPosts.Clear();
-                foreach (var newsPost in newsPostsFromApi)
+                var response = await _dbConnection.GetAllPosts(1);
+
+                if (!response.IsSuccess)
                 {
-                    _newsPosts.Add(newsPost);
+                    string message = response.StatusCode == 401
+                        ? "You are not authorized to view news posts."
+                        : $"Failed to load news posts: {response.ErrorMessage}";
+                    await DisplayAlert("Error", message, "OK");
+                    return;
+                }
+
+                var newsPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response.Content);
+                _newsPosts.Clear();
+                if (newsPostsFromApi != null)
+                {
+                    foreach (var newsPost in newsPostsFromApi)
+                    {
+                        _newsPosts.Add(newsPost);
+                    }
                 }
                 NewsPostsCollectionView.ItemsSource = _newsPosts;
             }
@@ -50,12 +63,25 @@ namespace comApp.posts
         {
             try
             {
-                string response = await _dbConnection.GetAllPosts(0);
-                var userPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response);
-                _userPosts.Clear();
-                foreach (var userPost in userPostsFromApi)
+                var response = await _dbConnection.GetAllPosts(0);
+
+                if (!response.IsSuccess)
                 {
-                    _userPosts.Add(userPost);
+                    string message = response.StatusCode == 401
+                        ? "You are not authorized to view user posts."
+                        : $"Failed to load user posts: {response.ErrorMessage}";
+                    await DisplayAlert("Error", message, "OK");
+                    return;
+                }
+
+                var userPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response.Content);
+                _userPosts.Clear();
+                if (userPostsFromApi != null)
+                {
+                    foreach (var userPost in userPostsFromApi)
+                    {
+                        _userPosts.Add(userPost);
+                    }
                 }
                 UserPostsCollectionView.ItemsSource = _userPosts;
             }

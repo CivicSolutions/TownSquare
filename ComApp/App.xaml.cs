@@ -1,4 +1,6 @@
-﻿namespace comApp
+﻿using dotenv.net;
+
+namespace comApp
 {
     public partial class App : Application
     {
@@ -7,7 +9,6 @@
         public App()
         {
             InitializeComponent();
-
             MainPage = new AppShell();
         }
     }

@@ -1,6 +1,8 @@
 # Ignore Visual Studio temporary files, build results, and
 # common configuration files.
 # User-specific files
+Secret.props
+.env
 .vscode/
 *.user
 *.userosscache

@@ -5,13 +5,12 @@ using Newtonsoft.Json;
 
 public partial class EditSettingsPage : ContentPage
 {
-    public dbConnection _dbConnection;
+    private dbConnection _dbConnection;
 
     public EditSettingsPage()
     {
         InitializeComponent();
 
-        // Subscribe to the TextChanged events for username and bio fields
         usernameEntry.TextChanged += OnUsernameEntryTextChanged;
         bioEditor.TextChanged += OnBioEditorTextChanged;
 
@@ -70,9 +69,20 @@ public partial class EditSettingsPage : ContentPage
     {
         int userId = App.UserId;
 
-        string response = await _dbConnection.GetUserById(userId);
-        dynamic userData = JsonConvert.DeserializeObject(response);
+        var response = await _dbConnection.GetUserById(userId);
 
+        if (response == null || !response.IsSuccess)
+        {
+            string message = response == null
+                ? "Failed to load user data."
+                : response.StatusCode == 401
+                    ? "You are not authorized to view user data."
+                    : $"Failed to load user data: {response.ErrorMessage}";
+            await DisplayAlert("Error", message, "OK");
+            return;
+        }
+
+        dynamic userData = JsonConvert.DeserializeObject(response.Content);
         BindingContext = userData;
     }
 
@@ -83,22 +93,38 @@ public partial class EditSettingsPage : ContentPage
         int userId = App.UserId;
 
         // Get current user data to keep email and password unchanged
-        string currentUserResponse = await _dbConnection.GetUserById(userId);
-        dynamic userData = JsonConvert.DeserializeObject(currentUserResponse);
+        var currentUserResponse = await _dbConnection.GetUserById(userId);
+
+        if (currentUserResponse == null || !currentUserResponse.IsSuccess)
+        {
+            string message = currentUserResponse == null
+                ? "Failed to load user data."
+                : currentUserResponse.StatusCode == 401
+                    ? "You are not authorized to update user data."
+                    : $"Failed to load user data: {currentUserResponse.ErrorMessage}";
+            await DisplayAlert("Error", message, "OK");
+            return;
+        }
+
+        dynamic userData = JsonConvert.DeserializeObject(currentUserResponse.Content);
         string email = userData.email;
         string password = userData.password;
 
-        // Update user with all required fields
-        string response = await _dbConnection.UpdateUser(userId, (string)email, (string)password, newUsername, newBio);
+        var response = await _dbConnection.UpdateUser(userId, (string)email, (string)password, newUsername, newBio);
 
-        if (!string.IsNullOrEmpty(response))
+        if (response != null && response.IsSuccess)
         {
             await DisplayAlert("Success", "User data updated successfully", "OK");
             await Navigation.PopAsync();
         }
         else
         {
-            await DisplayAlert("Error", "Failed to update user data", "OK");
+            string message = response == null
+                ? "Failed to update user data."
+                : response.StatusCode == 401
+                    ? "You are not authorized to update user data."
+                    : $"Failed to update user data: {response.ErrorMessage}";
+            await DisplayAlert("Error", message, "OK");
         }
     }
 }

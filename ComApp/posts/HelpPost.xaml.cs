@@ -2,6 +2,7 @@ namespace comApp.posts;
 using Microsoft.Maui.Controls;
 using System.Text.RegularExpressions;
 using comApp.db;
+
 public partial class HelpPost : ContentPage
 {
     private dbConnection _dbConnection;
@@ -136,27 +137,30 @@ public partial class HelpPost : ContentPage
             return;
         }
 
+        int userId = App.UserId;
+        Console.WriteLine("YOU ARE USING FOLLOWING USER ID: " + userId);
+        string title = titleEntry.Text;
+        string description = descriptionEditor.Text;
+        string InputPrice = priceEntry.Text;
+        int price;
+        int.TryParse(InputPrice, out price);
+        DateTime postedAt = DateTime.UtcNow;
+        string telephone = telephoneEntry.Text;
+
+        var response = await _dbConnection.AddHelpPost(title, description, price, telephone, postedAt, userId);
+
+        if (response != null && response.IsSuccess)
+        {
+            await Navigation.PushAsync(new HelpPostsPage());
+        }
         else
         {
-            int userId = App.UserId;
-            Console.WriteLine("YOU ARE USING FOLLOWING USER ID: " + userId);
-            string title = titleEntry.Text;
-            string description = descriptionEditor.Text;
-            string InputPrice = priceEntry.Text;
-            int price;
-            int.TryParse(InputPrice, out price);
-            DateTime postedAt = DateTime.UtcNow;
-            string telephone = telephoneEntry.Text;
-
-            var response = await _dbConnection.AddHelpPost(title, description, price, telephone, postedAt, userId);
-            if (response != null)
-            {
-                await Navigation.PushAsync(new HelpPostsPage());
-            }
-            else
-            {
-                await DisplayAlert("Error", "There was an issue creating the help post. Please try again.", "OK");
-            }
+            string message = response == null
+                ? "There was an issue creating the help post. Please try again."
+                : response.StatusCode == 401
+                    ? "You are not authorized to create a help post."
+                    : $"There was an issue creating the help post: {response.ErrorMessage}";
+            await DisplayAlert("Error", message, "OK");
         }
     }
 

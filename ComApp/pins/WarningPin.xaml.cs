@@ -131,10 +131,30 @@ public partial class WarningPin : ContentPage
 
         try
         {
-            await _dbConnection.CreatePin(title, description, (double)location.Latitude, (double)location.Longitude, 1, 2); //hardcoded communityid for now
-            string message = "Pin added successfully \u2714";
-            await DisplayAlert("Success", message, "OK");
-            await Navigation.PopAsync();
+            var response = await _dbConnection.CreatePin(
+                title,
+                description,
+                (double)location.Latitude,
+                (double)location.Longitude,
+                1, // hardcoded communityid for now
+                2  // pintype for warning
+            );
+
+            if (response == null || !response.IsSuccess)
+            {
+                string message = response == null
+                    ? "An error occurred while adding the pin."
+                    : response.StatusCode == 401
+                        ? "You are not authorized to add a pin."
+                        : $"An error occurred: {response.ErrorMessage}";
+                await DisplayAlert("Error", message, "OK");
+            }
+            else
+            {
+                string message = "Pin added successfully \u2714";
+                await DisplayAlert("Success", message, "OK");
+                await Navigation.PopAsync();
+            }
         }
         catch (MySqlException ex)
         {

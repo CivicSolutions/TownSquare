@@ -24,8 +24,28 @@ namespace comApp
         private async void LoadPins()
         {
             int communityId = 1; // TODO: Replace with actual community ID logic
-            string response = await _dbConnection.GetAllPins(communityId);
-            var pinsFromDB = JsonConvert.DeserializeObject<List<PinData>>(response);
+            var response = await _dbConnection.GetAllPins(communityId);
+
+            if (!response.IsSuccess)
+            {
+                // Show error message (e.g., unauthorized or other errors)  
+                string message = response.StatusCode == 401
+                    ? "You are not authorized to view pins."
+                    : $"Error loading pins: {response.ErrorMessage}";
+
+                await DisplayAlert("Error", message, "OK");
+
+                if (response.StatusCode == 401)
+                {
+                    // Redirect to login page and hide navigation  
+                    await Shell.Current.GoToAsync("//LoginPage");
+                    NavigationPage.SetHasNavigationBar(this, false);
+                }
+
+                return;
+            }
+
+            var pinsFromDB = JsonConvert.DeserializeObject<List<PinData>>(response.Content);
 
             if (pinsFromDB != null)
             {
@@ -47,6 +67,7 @@ namespace comApp
         }
 
 
+
         private async void CheckUser()
         {
             // Implement a session/user validation method in dbConnection
@@ -56,12 +77,6 @@ namespace comApp
             {
                 await Shell.Current.GoToAsync("//LoginPage");
             }
-        }
-
-        private async void TestDatabaseConnection()
-        {
-            string response = await _dbConnection.GetAllCommunities();
-            await DisplayAlert("Database Test", response.Contains("Error") ? "Connection failed." : "Connection successful!", "OK");
         }
 
         private void ReloadPins()

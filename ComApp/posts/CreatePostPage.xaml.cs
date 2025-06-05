@@ -73,15 +73,21 @@ namespace comApp.posts
             {
                 int userId = App.UserId;
                 int isNews = 0; // false for now, we need to implement Roles
-                string response = await _dbConnection.CreatePost(content, isNews, 1); // communityid hardcoded for now
-                if (response.Contains("Error"))
+                var response = await _dbConnection.CreatePost(content, isNews, 1); // communityid hardcoded for now
+
+                if (response == null || !response.IsSuccess)
                 {
-                    await DisplayAlert("Error", "Failed to add post", "OK");
+                    string message = response == null
+                        ? "Failed to add post."
+                        : response.StatusCode == 401
+                            ? "You are not authorized to add a post."
+                            : $"Failed to add post: {response.ErrorMessage}";
+                    await DisplayAlert("Error", message, "OK");
                 }
                 else
                 {
-                    DisplayAlert("Success", "Post added successfully", "OK");
-                    Navigation.PopAsync();
+                    await DisplayAlert("Success", "Post added successfully", "OK");
+                    await Navigation.PopAsync();
                 }
             }
             else

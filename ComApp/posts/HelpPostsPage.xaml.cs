@@ -19,12 +19,22 @@ public partial class HelpPostsPage : ContentPage
 
     private async void LoadPosts()
     {
-        string response = await _dbConnection.GetHelpPosts();
-        var helpPostsFromDb = JsonConvert.DeserializeObject<List<HelpPosts>>(response);
+        var response = await _dbConnection.GetHelpPosts();
 
+        if (!response.IsSuccess)
+        {
+            string message = response.StatusCode == 401
+                ? "You are not authorized to view help posts."
+                : $"Failed to load help posts: {response.ErrorMessage}";
+            await DisplayAlert("Error", message, "OK");
+            return;
+        }
+
+        var helpPostsFromDb = JsonConvert.DeserializeObject<List<HelpPosts>>(response.Content);
+
+        _helpposts.Clear();
         if (helpPostsFromDb != null)
         {
-            _helpposts.Clear();
             foreach (var helppost in helpPostsFromDb)
             {
                 _helpposts.Add(helppost);

@@ -26,25 +26,24 @@ namespace comApp.signUp
         {
             if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Description))
             {
-                // Show error message to user
                 await Application.Current.MainPage.DisplayAlert("Error", "Please fill in all fields.", "OK");
                 return;
             }
 
             if (Password != ConfirmPassword)
             {
-                // Show error if passwords don't match
                 await Application.Current.MainPage.DisplayAlert("Error", "Passwords do not match.", "OK");
                 return;
             }
 
-            //         public Task<string> RegisterUser(int id, string name, string email, string password, string description)
             var response = await _dbConnection.RegisterUser(Name, Email, Password, Description);
 
-            // Handle the response
-            if (response.Contains("Error"))
+            if (!response.IsSuccess)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", response, "OK");
+                string message = response.StatusCode == 401
+                    ? "You are not authorized to register."
+                    : $"Registration failed: {response.ErrorMessage}";
+                await Application.Current.MainPage.DisplayAlert("Error", message, "OK");
             }
             else
             {
@@ -53,5 +52,4 @@ namespace comApp.signUp
             }
         }
     }
-
 }
