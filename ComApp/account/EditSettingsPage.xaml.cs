@@ -11,7 +11,6 @@ public partial class EditSettingsPage : ContentPage
     {
         InitializeComponent();
 
-        usernameEntry.TextChanged += OnUsernameEntryTextChanged;
         bioEditor.TextChanged += OnBioEditorTextChanged;
 
         ToolbarItems.Add(new ToolbarItem
@@ -37,25 +36,11 @@ public partial class EditSettingsPage : ContentPage
         }
     }
 
-    private void OnUsernameEntryTextChanged(object sender, TextChangedEventArgs e)
-    {
-        string newUsername = e.NewTextValue;
-
-        if (newUsername.Length > 40)
-        {
-            usernameErrorLabel.Text = "Username must be maximum 40 characters long";
-        }
-        else
-        {
-            usernameErrorLabel.Text = string.Empty;
-        }
-    }
-
     private void OnBioEditorTextChanged(object sender, TextChangedEventArgs e)
     {
-        string newBio = e.NewTextValue;
+        string description = e.NewTextValue;
 
-        if (newBio.Length > 200)
+        if (description.Length > 200)
         {
             bioErrorLabel.Text = "Bio must be maximum 200 characters long";
         }
@@ -83,14 +68,24 @@ public partial class EditSettingsPage : ContentPage
         }
 
         dynamic userData = JsonConvert.DeserializeObject(response.Content);
-        BindingContext = userData;
+
+        firstNameEntry.Text = userData.firstName;
+        lastNameEntry.Text = userData.lastName;
+        bioEditor.Text = userData.description;
     }
 
     private async void OnSaveChangesClicked(object sender, EventArgs e)
     {
-        string newUsername = usernameEntry.Text;
-        string newBio = bioEditor.Text;
+        string firstName = firstNameEntry.Text?.Trim();
+        string lastName = lastNameEntry.Text?.Trim();
+        string description = bioEditor.Text?.Trim();
         string userId = App.UserId;
+
+        if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+        {
+            await DisplayAlert("Error", "First and last name cannot be empty.", "OK");
+            return;
+        }
 
         // Get current user data to keep email and password unchanged
         var currentUserResponse = await _dbConnection.GetUserById(userId);
@@ -110,7 +105,7 @@ public partial class EditSettingsPage : ContentPage
         string email = userData.email;
         string password = userData.password;
 
-        var response = await _dbConnection.UpdateUser(userId, (string)email, (string)password, newUsername, newBio);
+        var response = await _dbConnection.UpdateUser(userId, (string)email, firstName, lastName, description);
 
         if (response != null && response.IsSuccess)
         {

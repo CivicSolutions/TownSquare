@@ -2,6 +2,7 @@ namespace comApp.account;
 using comApp.login;
 using comApp.db;
 using Microsoft.Maui.Controls;
+using Newtonsoft.Json.Linq;
 
 public partial class AccountSettingsPage : ContentPage
 {
@@ -18,10 +19,22 @@ public partial class AccountSettingsPage : ContentPage
     private async void LoadUser()
     {
         string userId = App.UserId;
-        var userData = await _dbConnection.GetUserById(userId);
+        var response = await _dbConnection.GetUserById(userId);
 
-        BindingContext = userData;
+        if (response == null || !response.IsSuccess)
+        {
+            await DisplayAlert("Error", "Failed to load user data", "OK");
+            return;
+        }
+
+        dynamic userData = Newtonsoft.Json.JsonConvert.DeserializeObject(response.Content);
+
+        // Assign values to UI controls directly
+        firstNameLabel.Text = userData.firstName ?? "No first name";
+        lastNameLabel.Text = userData.lastName ?? "No last name";
+        descriptionLabel.Text = userData.description ?? "(No description)";
     }
+
 
     private async void CheckUser()
     {

@@ -7,15 +7,17 @@
 
         <Label Text="Edit Settings" FontSize="Large" Margin="0,0,0,20" HorizontalOptions="Center" />
 
-        <Label Text="Username" FontSize="Medium" Margin="0,0,0,5" />
-        <Entry x:Name="usernameEntry" Text="{Binding Name}" Placeholder="Enter your username" FontSize="Medium" Margin="0,0,0,5" />
-        <Label x:Name="usernameErrorLabel" TextColor="Red" Margin="0,-5,0,10" />
+        <Label Text="First Name" FontSize="Medium" Margin="0,0,0,5" />
+        <Entry x:Name="firstNameEntry" Placeholder="Enter your first name" FontSize="Medium" Margin="0,0,0,10" />
+
+        <Label Text="Last Name" FontSize="Medium" Margin="0,0,0,5" />
+        <Entry x:Name="lastNameEntry" Placeholder="Enter your last name" FontSize="Medium" Margin="0,0,0,20" />
 
         <Label Text="Bio" FontSize="Medium" Margin="0,0,0,5" />
         <Editor x:Name="bioEditor" Text="{Binding Bio}" Placeholder="Enter your bio" FontSize="Medium" HeightRequest="150" Margin="0,0,0,5" />
         <Label x:Name="bioErrorLabel" TextColor="Red" Margin="0,-5,0,20" />
 
-        <Button Text="Save Changes"
+        <Button Text="Save Changes" 
                 Clicked="OnSaveChangesClicked"
                 Style="{StaticResource GreyButtonStyle}"
                 Margin="0, 0, 0, 10"

@@ -213,9 +213,9 @@ namespace comApp.db
         // public Task<string> GetUserBySessionToken(string sessionToken) => GetRequest($"/User/GetByToken/{sessionToken}");
 
         // public Task<string> ValidateSessionToken(string sessionToken) => GetRequest($"/User/Validate/{sessionToken}");
-        public Task<ApiResponse> UpdateUser(string userId, string email, string password, string name, string description)
+        public Task<ApiResponse> UpdateUser(string userId, string email, string firstName, string lastName, string description)
         {
-            var body = new { email, password, name, description };
+            var body = new { email, firstName, lastName, description };
             return PutRequest($"/User/{userId}", body);
         }
 

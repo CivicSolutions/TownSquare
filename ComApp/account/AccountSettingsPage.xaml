@@ -4,17 +4,21 @@
              Title="AccountSettingsPage">
 
     <StackLayout VerticalOptions="Start" HorizontalOptions="FillAndExpand" Padding="20">
+        <Label  x:Name="firstNameLabel" 
+                FontSize="Large" 
+                Margin="0,0,0,10" 
+                HorizontalOptions="Center" />
 
-        <Label Text="{Binding Name}"
-               FontSize="Large"
-               Margin="0,0,0,10"
-               HorizontalOptions="Center" />
+        <Label  x:Name="lastNameLabel" 
+                FontSize="Large" 
+                Margin="0,0,0,10" 
+                HorizontalOptions="Center" />
 
-        <!-- Bind the Text property to the Bio property of the User -->
-        <Label Text="{Binding Bio}"
-               FontSize="Medium"
-               Margin="0,0,0,20"
-               HorizontalOptions="Center" />
+        <Label  x:Name="descriptionLabel" 
+                FontSize="Medium" 
+                Margin="0,0,0,20" 
+                HorizontalOptions="Center" />
+
 
         <Button Text="Edit"
                 Clicked="OnEditClicked"
