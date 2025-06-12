@@ -21,9 +21,9 @@ namespace comApp.posts
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            await CheckUser();
             await LoadNewsPosts();
             await LoadUserPosts();
-            await CheckUser();
             NavigationPage.SetHasNavigationBar(this, false);
         }
 
@@ -100,8 +100,8 @@ namespace comApp.posts
         {
             try
             {
-                int userId = Preferences.Get("userId", -1);
-                if (userId < 0)
+                string userId = App.UserId;
+                if (userId is null or "")
                 {
                     await Shell.Current.GoToAsync("//LoginPage");
                 }

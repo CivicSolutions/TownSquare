@@ -67,7 +67,7 @@ public partial class EditSettingsPage : ContentPage
 
     private async void LoadUser()
     {
-        int userId = App.UserId;
+        string userId = App.UserId;
 
         var response = await _dbConnection.GetUserById(userId);
 
@@ -90,7 +90,7 @@ public partial class EditSettingsPage : ContentPage
     {
         string newUsername = usernameEntry.Text;
         string newBio = bioEditor.Text;
-        int userId = App.UserId;
+        string userId = App.UserId;
 
         // Get current user data to keep email and password unchanged
         var currentUserResponse = await _dbConnection.GetUserById(userId);

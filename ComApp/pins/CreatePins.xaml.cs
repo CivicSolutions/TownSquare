@@ -24,9 +24,9 @@ public partial class CreatePins : ContentPage
 
     private async void CheckUser()
     {
-        int userId = App.UserId;
+        string userId = App.UserId;
 
-        if (userId < 0)
+        if (userId is null or "")
         {
             await Shell.Current.GoToAsync("//LoginPage");
         }

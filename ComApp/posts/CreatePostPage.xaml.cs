@@ -71,7 +71,7 @@ namespace comApp.posts
 
             if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(content) && content.Length >= 50 && content.Length <= 600)
             {
-                int userId = App.UserId;
+                string userId = App.UserId;
                 int isNews = 0; // false for now, we need to implement Roles
                 var response = await _dbConnection.CreatePost(content, isNews, 1); // communityid hardcoded for now
 

@@ -58,22 +58,24 @@ public partial class HelpPostsPage : ContentPage
     //    }
     //}
 
-    //private async Task<int> GetUserIdFromSession()
-    //{
-    //    string response = await _dbConnection.GetUserById(userId: App.UserId);
-    //    if (int.TryParse(response, out int userId))
-    //    {
-    //        return userId;
-    //    }
-    //    return -1;
-    //}
+
+    private async void CheckUser()
+    {
+        string userId = App.UserId;
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            await Shell.Current.GoToAsync("//LoginPage");
+        }
+    }
+
 
     private async void OnAcceptButtonClicked(object sender, EventArgs e)
     {
         var button = (Button)sender;
         var selectedHelpPost = (HelpPosts)button.BindingContext;
 
-        int loggedInUserId = App.UserId;
+        string loggedInUserId = App.UserId;
 
         if (selectedHelpPost.UserId == loggedInUserId)
         {

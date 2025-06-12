@@ -137,7 +137,7 @@ public partial class HelpPost : ContentPage
             return;
         }
 
-        int userId = App.UserId;
+        string userId = App.UserId;
         Console.WriteLine("YOU ARE USING FOLLOWING USER ID: " + userId);
         string title = titleEntry.Text;
         string description = descriptionEditor.Text;

@@ -17,7 +17,7 @@ public partial class AccountSettingsPage : ContentPage
 
     private async void LoadUser()
     {
-        int userId = App.UserId;
+        string userId = App.UserId;
         var userData = await _dbConnection.GetUserById(userId);
 
         BindingContext = userData;
@@ -25,9 +25,9 @@ public partial class AccountSettingsPage : ContentPage
 
     private async void CheckUser()
     {
-        int userId = App.UserId;
+        string userId = App.UserId;
 
-        if (userId < 0)
+        if (userId is null or "")
         {
             await Navigation.PushAsync(new Login());
         }

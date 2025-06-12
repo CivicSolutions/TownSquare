@@ -118,7 +118,7 @@ namespace comApp.db
 
         public Task<ApiResponse> GetHelpPosts() => GetRequest("/HelpPost/GetHelpPosts");
 
-        public Task<ApiResponse> AddHelpPost(string title, string description, double price, string telephone, DateTime postedAt, int userId)
+        public Task<ApiResponse> AddHelpPost(string title, string description, double price, string telephone, DateTime postedAt, string userId)
         {
             var body = new
             {
@@ -127,7 +127,7 @@ namespace comApp.db
                 price = (int)price,
                 telephone,
                 postedAt = postedAt.ToString("o"),
-                userId = userId.ToString()
+                userId
             };
             return PostRequest("/HelpPost/AddHelpPost", body);
         }
@@ -208,17 +208,17 @@ namespace comApp.db
             return PostRequest("/Auth/Login", body);
         }
 
-        public Task<ApiResponse> GetUserById(int userId) => GetRequest($"/User/GetById/{userId}");
+        public Task<ApiResponse> GetUserById(string userId) => GetRequest($"/User/{userId}");
 
         // public Task<string> GetUserBySessionToken(string sessionToken) => GetRequest($"/User/GetByToken/{sessionToken}");
 
         // public Task<string> ValidateSessionToken(string sessionToken) => GetRequest($"/User/Validate/{sessionToken}");
-        public Task<ApiResponse> UpdateUser(int userId, string email, string password, string name, string description)
+        public Task<ApiResponse> UpdateUser(string userId, string email, string password, string name, string description)
         {
             var body = new { email, password, name, description };
-            return PutRequest($"/User/Update/{userId}", body);
+            return PutRequest($"/User/{userId}", body);
         }
 
-        public Task<ApiResponse> DeleteUser(int userId) => DeleteRequest($"/User/DeleteUser/{userId}");
+        public Task<ApiResponse> DeleteUser(int userId) => DeleteRequest($"/User/{userId}");
     }
 }

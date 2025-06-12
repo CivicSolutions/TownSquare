@@ -16,8 +16,7 @@ public partial class Login : ContentPage
     private async void OnSkipLoginClicked(object sender, EventArgs e)
     {
         // Simulate setting a logged-in user with ID 1
-        Preferences.Set("userId", 1);
-        App.UserId = 1;
+        App.UserId = "eef0d089-669c-4efc-bc4a-51523c5052fa";
 
 
         // Optionally preload dummy user data here if needed
