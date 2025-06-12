@@ -21,7 +21,7 @@ namespace comApp.posts
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await CheckUser();
+            // await CheckUser();
             await LoadNewsPosts();
             await LoadUserPosts();
             NavigationPage.SetHasNavigationBar(this, false);

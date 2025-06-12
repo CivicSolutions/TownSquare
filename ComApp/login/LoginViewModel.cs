@@ -46,30 +46,25 @@ namespace comApp.login
                 var jsonDoc = JsonDocument.Parse(response.Content);
                 JsonElement root = jsonDoc.RootElement;
 
-                // Extract session ID
+                // Extract and store token
                 if (root.TryGetProperty("token", out JsonElement tokenElement))
                 {
-                    App.SessionToken = tokenElement.GetString(); // Save session globally
-
-                    await Application.Current.MainPage.DisplayAlert("Success", "Login successful.", "OK");
-
-                    //// Optionally: Fetch and store userId using session
-                    //string userIdResponse = await _dbConnection.GetUserIdFromSession(App.SessionId);
-                    //if (int.TryParse(userIdResponse, out int userId))
-                    //{
-                    //    App.UserId = userId;
-                    //}
-
-                    await _navigation.PushAsync(new MainPage());
+                    App.SessionToken = tokenElement.GetString();
                 }
-                else
+
+                // Extract and store user_id
+                if (root.TryGetProperty("userId", out JsonElement userIdElement))
                 {
-                    await Application.Current.MainPage.DisplayAlert("Error", "Session ID not found in response.", "OK");
+                    App.UserId = userIdElement.GetString();
                 }
+
+                // Proceed after successful login
+                await Application.Current.MainPage.DisplayAlert("Success", "Login successful.", "OK");
+                await _navigation.PushAsync(new MainPage());
             }
             catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Error", $"Failed to parse response: {ex.Message}", "OK");
+                await Application.Current.MainPage.DisplayAlert("Error", $"Login failed: {ex.Message}", "OK");
             }
         }
     }
