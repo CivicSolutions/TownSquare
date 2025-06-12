@@ -152,9 +152,9 @@ namespace comApp.db
         public Task<ApiResponse> GetPinById(int communityId, int id) =>
             GetRequest($"/Pin/GetById?communityId={communityId}&id={id}");
 
-        public Task<ApiResponse> CreatePin(string title, string description, double xCord, double yCord, int communityId, int pintype)
+        public Task<ApiResponse> CreatePin(string title, string description, double xCord, double yCord, int communityId, int pintype, string userId)
         {
-            var body = new { title, description, xCord, yCord, communityId, pintype };
+            var body = new { title, description, xCord, yCord, communityId, pintype, userId };
             return PostRequest("/Pin", body);
         }
 

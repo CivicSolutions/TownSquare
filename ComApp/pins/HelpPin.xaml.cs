@@ -108,6 +108,7 @@ public partial class HelpPin : ContentPage
     {
         string title = titleEntry.Text;
         string description = descriptionEditor.Text;
+        string userId = App.UserId;
 
         if (string.IsNullOrWhiteSpace(title) || title.Length > 50)
         {
@@ -136,7 +137,8 @@ public partial class HelpPin : ContentPage
                 (double)location.Latitude,
                 (double)location.Longitude,
                 1, // hardcoded communityid for now
-                1  // pintype for help
+                1,  // pintype for help
+                userId
             );
 
             if (response == null || !response.IsSuccess)

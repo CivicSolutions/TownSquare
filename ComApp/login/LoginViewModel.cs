@@ -58,9 +58,12 @@ namespace comApp.login
                     App.UserId = userIdElement.GetString();
                 }
 
+                var token = App.SessionToken;
+                await SecureStorage.SetAsync("session_token", token);
+
                 // Proceed after successful login
                 await Application.Current.MainPage.DisplayAlert("Success", "Login successful.", "OK");
-                await _navigation.PushAsync(new MainPage());
+                Application.Current.MainPage = new AppShell();
             }
             catch (Exception ex)
             {
