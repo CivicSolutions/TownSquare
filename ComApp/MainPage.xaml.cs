@@ -9,7 +9,7 @@ namespace comApp
     public partial class MainPage : ContentPage
     {
         private readonly dbConnection _dbConnection;
-        public ObservableCollection<Pin> Pins { get; } = new();
+        public ObservableCollection<CustomPin> Pins { get; } = new();
 
         public MainPage()
         {
@@ -46,36 +46,39 @@ namespace comApp
             }
 
             var pinsFromDB = JsonConvert.DeserializeObject<List<PinData>>(response.Content);
-            if (pinsFromDB is null)
-                return;
+            if (pinsFromDB is null) return;
 
-            // Log the fetched pin data  
             Console.WriteLine($"Fetched Pins: {JsonConvert.SerializeObject(pinsFromDB)}");
 
             Pins.Clear();
 
-            // Add pins from the database  
             foreach (var pin in pinsFromDB)
             {
                 if (IsValidCoordinate(pin.XCoord, pin.YCoord))
                 {
-                    Pins.Add(new Pin
+                    Pins.Add(new CustomPin
                     {
                         Label = pin.Title,
                         Address = pin.Description,
-                        Location = new Location(pin.XCoord, pin.YCoord)
+                        Location = new Location(pin.XCoord, pin.YCoord),
+                        PinType = pin.PinType
                     });
                 }
             }
 
-            Pins.Add(new Pin
+            Pins.Add(new CustomPin
             {
                 Label = "Dummy Pin",
                 Address = "Ins, Bern, Switzerland",
-                Location = new Location(47.006, 7.106)
+                Location = new Location(47.006, 7.106),
+                PinType = 2
             });
 
-            map.ItemsSource = Pins;
+            map.Pins.Clear();
+            foreach (var pin in Pins)
+            {
+                map.Pins.Add(pin);
+            }
         }
 
         private static bool IsValidCoordinate(double lat, double lon)
@@ -93,6 +96,14 @@ namespace comApp
 
             [JsonProperty("yCord")]
             public double YCoord { get; set; }
+
+            [JsonProperty("pintype")]
+            public int PinType { get; set; }
+        }
+
+        public class CustomPin : Pin
+        {
+            public int PinType { get; set; }
         }
     }
 }

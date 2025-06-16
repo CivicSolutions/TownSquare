@@ -20,14 +20,6 @@
                 </x:Arguments>
             </maps:MapSpan>
         </x:Arguments>
-
-        <maps:Map.ItemTemplate>
-            <DataTemplate x:DataType="maps:Pin">
-                <maps:Pin Location="{Binding Location}"
-                          Address="{Binding Address}"
-                          Label="{Binding Label}" />
-            </DataTemplate>
-        </maps:Map.ItemTemplate>
     </maps:Map>
 
 </ContentPage>
