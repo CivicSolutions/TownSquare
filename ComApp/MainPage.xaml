@@ -1,34 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
-             xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
-             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
+             xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
              x:Class="comApp.MainPage">
 
-    <maps:Map  IsShowingUser="true"  x:Name="map">
-        
-            <x:Arguments>
-                <maps:MapSpan>
-                    <x:Arguments>
-                        <sensors:Location>
-                            <x:Arguments>
+    <maps:Map x:Name="map" IsShowingUser="true">
+        <x:Arguments>
+            <maps:MapSpan>
+                <x:Arguments>
+                    <sensors:Location>
+                        <x:Arguments>
                             <x:Double>47.005885107015885</x:Double>
                             <x:Double>7.10540621176175</x:Double>
-                            </x:Arguments> 
-                        </sensors:Location>
-                        <x:Double>0.01</x:Double>
-                        <x:Double>0.01</x:Double>
-                    </x:Arguments>
-                </maps:MapSpan>
-            </x:Arguments>
-        <maps:Map.ItemTemplate>
-            <DataTemplate x:DataType="maps:Pin">
-                <maps:Pin Location="{Binding Location}"
-                      Address="{Binding Address}"
-                      Label="{Binding Label}" />
-            </DataTemplate>
-        </maps:Map.ItemTemplate>
+                        </x:Arguments>
+                    </sensors:Location>
+                    <x:Double>0.01</x:Double>
+                    <x:Double>0.01</x:Double>
+                </x:Arguments>
+            </maps:MapSpan>
+        </x:Arguments>
     </maps:Map>
 
 </ContentPage>
-

@@ -152,9 +152,9 @@ namespace comApp.db
         public Task<ApiResponse> GetPinById(int communityId, int id) =>
             GetRequest($"/Pin/GetById?communityId={communityId}&id={id}");
 
-        public Task<ApiResponse> CreatePin(string title, string description, double xCord, double yCord, int communityId, int pintype)
+        public Task<ApiResponse> CreatePin(string title, string description, double xCord, double yCord, int communityId, int pintype, string userId)
         {
-            var body = new { title, description, xCord, yCord, communityId, pintype };
+            var body = new { title, description, xCord, yCord, communityId, pintype, userId };
             return PostRequest("/Pin", body);
         }
 
@@ -171,8 +171,8 @@ namespace comApp.db
         // POST
         // -------------------------------
 
-        public Task<ApiResponse> GetAllPosts(int communityId) =>
-            GetRequest($"/Post/GetAll?communityId={communityId}");
+        public Task<ApiResponse> GetAllPosts(string userId) =>
+            GetRequest($"/Post/GetAll?userId={userId}");
 
         public Task<ApiResponse> GetPostById(int communityId, int id) =>
             GetRequest($"/Post/GetById?communityId={communityId}&id={id}");
@@ -191,6 +191,17 @@ namespace comApp.db
 
         public Task<ApiResponse> DeletePost(int communityId, int postId) =>
             DeleteRequest($"/Post?communityId={communityId}&postId={postId}");
+
+        public Task<ApiResponse> LikePost(int postId, string userId)
+        {
+            return PostRequest($"/Post/Like?postId={postId}&userId={userId}", null);
+        }
+
+        public Task<ApiResponse> UnlikePost(int postId, string userId)
+        {
+            return PostRequest($"/Post/Unlike?postId={postId}&userId={userId}", null);
+        }
+
 
         // -------------------------------
         // USER

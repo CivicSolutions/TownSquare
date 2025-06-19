@@ -9,6 +9,7 @@ namespace comApp.posts
         private dbConnection _dbConnection;
         private ObservableCollection<Post> _newsPosts;
         private ObservableCollection<Post> _userPosts;
+        private string userId;
 
         public PostsPage()
         {
@@ -16,78 +17,57 @@ namespace comApp.posts
             _dbConnection = new dbConnection();
             _newsPosts = new ObservableCollection<Post>();
             _userPosts = new ObservableCollection<Post>();
+            userId = App.UserId;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            // await CheckUser();
-            await LoadNewsPosts();
-            await LoadUserPosts();
+            await LoadPosts(); // Unified function
             NavigationPage.SetHasNavigationBar(this, false);
         }
 
-        private async Task LoadNewsPosts()
+
+        private async Task LoadPosts()
         {
             try
             {
-                var response = await _dbConnection.GetAllPosts(1);
+                var response = await _dbConnection.GetAllPosts(userId);
 
                 if (!response.IsSuccess)
                 {
                     string message = response.StatusCode == 401
-                        ? "You are not authorized to view news posts."
-                        : $"Failed to load news posts: {response.ErrorMessage}";
+                        ? "You are not authorized to view posts."
+                        : $"Failed to load posts: {response.ErrorMessage}";
                     await DisplayAlert("Error", message, "OK");
                     return;
                 }
 
-                var newsPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response.Content);
+                var allPosts = JsonConvert.DeserializeObject<List<Post>>(response.Content);
                 _newsPosts.Clear();
-                if (newsPostsFromApi != null)
-                {
-                    foreach (var newsPost in newsPostsFromApi)
-                    {
-                        _newsPosts.Add(newsPost);
-                    }
-                }
-                NewsPostsCollectionView.ItemsSource = _newsPosts;
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Error", $"Failed to load news posts: {ex.Message}", "OK");
-            }
-        }
-
-        private async Task LoadUserPosts()
-        {
-            try
-            {
-                var response = await _dbConnection.GetAllPosts(0);
-
-                if (!response.IsSuccess)
-                {
-                    string message = response.StatusCode == 401
-                        ? "You are not authorized to view user posts."
-                        : $"Failed to load user posts: {response.ErrorMessage}";
-                    await DisplayAlert("Error", message, "OK");
-                    return;
-                }
-
-                var userPostsFromApi = JsonConvert.DeserializeObject<List<Post>>(response.Content);
                 _userPosts.Clear();
-                if (userPostsFromApi != null)
+
+                if (allPosts != null)
                 {
-                    foreach (var userPost in userPostsFromApi)
+                    foreach (var post in allPosts)
                     {
-                        _userPosts.Add(userPost);
+                        if (post.IsNews == 1)
+                        {
+                            _newsPosts.Add(post); // Admin posts
+                        }
+                        else
+                        {
+                            _userPosts.Add(post); // Regular user posts
+                        }
                     }
                 }
+
+                NewsPostsCollectionView.ItemsSource = _newsPosts;
                 UserPostsCollectionView.ItemsSource = _userPosts;
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Error", $"Failed to load user posts: {ex.Message}", "OK");
+                await DisplayAlert("Error", $"Failed to load posts: {ex.Message}", "OK");
             }
         }
 
