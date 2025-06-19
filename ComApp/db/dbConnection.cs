@@ -132,7 +132,10 @@ namespace comApp.db
             return PostRequest("/HelpPost", body);
         }
 
-
+        public Task<ApiResponse> DeleteHelpPost(int id)
+        {
+            return DeleteRequest("/HelpPost?id=" + id);
+        }
 
         // -------------------------------
         // LOGIN
@@ -208,9 +211,9 @@ namespace comApp.db
         // USER
         // -------------------------------
 
-        public Task<ApiResponse> RegisterUser(string name, string email, string password, string description)
+        public Task<ApiResponse> RegisterUser(string email, string password, string firstName, string lastName, string description)
         {
-            var body = new { name, email, password, description };
+            var body = new { email, password, firstName, lastName, description };
             return PostRequest("/Auth/Register", body);
         }
 

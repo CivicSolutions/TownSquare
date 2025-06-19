@@ -6,8 +6,11 @@
     <ContentPage.Content>
         <StackLayout VerticalOptions="Center" HorizontalOptions="CenterAndExpand">
 
-            <Label Text="Name" />
-            <Entry Text="{Binding Name}" WidthRequest="250" Placeholder="Enter your name" />
+            <Label Text="First Name" />
+            <Entry Text="{Binding FirstName}" WidthRequest="250" Placeholder="Enter your name" />
+
+            <Label Text="Last Name" />
+            <Entry Text="{Binding LastName}" WidthRequest="250" Placeholder="Enter your name" />
 
             <Label Text="Email" />
             <Entry Text="{Binding Email}" WidthRequest="250" Placeholder="Enter your email" />
