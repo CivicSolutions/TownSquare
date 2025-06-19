@@ -2,26 +2,44 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="comApp.account.EditSettingsPage"
-             Title="EditSettingsPage">
-    <StackLayout VerticalOptions="Start" HorizontalOptions="FillAndExpand" Padding="20">
+             Title="Edit Profile">
 
-        <Label Text="Edit Settings" FontSize="Large" Margin="0,0,0,20" HorizontalOptions="Center" />
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
 
-        <Label Text="First Name" FontSize="Medium" Margin="0,0,0,5" />
-        <Entry x:Name="firstNameEntry" Placeholder="Enter your first name" FontSize="Medium" Margin="0,0,0,10" />
+            <Label Text="Edit Profile" FontSize="24" HorizontalOptions="Center" />
 
-        <Label Text="Last Name" FontSize="Medium" Margin="0,0,0,5" />
-        <Entry x:Name="lastNameEntry" Placeholder="Enter your last name" FontSize="Medium" Margin="0,0,0,20" />
+            <!-- Profile Image -->
+            <Frame Padding="0" HeightRequest="150" WidthRequest="150" CornerRadius="75"
+                   HorizontalOptions="Center" VerticalOptions="Center"
+                   IsClippedToBounds="True" HasShadow="False" BackgroundColor="LightGray">
+                <Image x:Name="ProfileImage"
+                   HeightRequest="150"
+                   WidthRequest="150"
+                   Aspect="AspectFill"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Margin="0,10"
+                   Source="default_profile.png" />
 
-        <Label Text="Bio" FontSize="Medium" Margin="0,0,0,5" />
-        <Editor x:Name="bioEditor" Text="{Binding Bio}" Placeholder="Enter your bio" FontSize="Medium" HeightRequest="150" Margin="0,0,0,5" />
-        <Label x:Name="bioErrorLabel" TextColor="Red" Margin="0,-5,0,20" />
+            </Frame>
 
-        <Button Text="Save Changes" 
-                Clicked="OnSaveChangesClicked"
-                Style="{StaticResource GreyButtonStyle}"
-                Margin="0, 0, 0, 10"
-                HorizontalOptions="Center"/>
+            <Button Text="Change Profile Picture"
+                    Clicked="OnChangeProfilePictureClicked"
+                    HorizontalOptions="Center"/>
 
-    </StackLayout>
+            <Label Text="Username" FontSize="Medium" />
+            <Entry x:Name="usernameEntry" Text="{Binding name}" Placeholder="Enter username" />
+            <Label x:Name="usernameErrorLabel" TextColor="Red" FontSize="Small" />
+
+            <Label Text="Bio" FontSize="Medium" />
+            <Editor x:Name="bioEditor" Text="{Binding description}" HeightRequest="120" Placeholder="Write your bio" />
+            <Label x:Name="bioErrorLabel" TextColor="Red" FontSize="Small" />
+
+            <Button Text="Save Changes"
+                    Clicked="OnSaveChangesClicked"
+                    HorizontalOptions="Center"/>
+
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

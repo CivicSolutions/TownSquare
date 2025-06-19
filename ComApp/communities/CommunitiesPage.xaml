@@ -3,18 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="comApp.communities.CommunitiesPage"
              Title="Communities">
+
     <ContentPage.Content>
         <StackLayout>
-            <ListView ItemsSource="{Binding Communities}">
+            <ListView x:Name="CommunitiesListView" HasUnevenRows="True">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout>
-                                <Label Text="{Binding Name}" />
-                                <Label Text="{Binding Bio}" />
-                                <Button Text="Request Membership" 
-                                    Command="{Binding Source={x:Reference communitiesPage}, Path=BindingContext.RequestMembershipCommand}" 
-                                    CommandParameter="{Binding .}" />
+                            <StackLayout Padding="10">
+                                <Label Text="{Binding name}" FontAttributes="Bold" />
+                                <Label Text="{Binding locaction}" />
+                                <Label Text="{Binding bio}" />
+                                <Label Text="{Binding Status}" FontSize="14" TextColor="Gray" />
+                                <Button Text="Request Membership" Clicked="OnRequestClicked" />
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>
