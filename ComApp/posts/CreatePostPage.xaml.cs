@@ -73,7 +73,7 @@ namespace comApp.posts
             {
                 string userId = App.UserId;
                 int isNews = 0; // false for now, we need to implement Roles
-                var response = await _dbConnection.CreatePost(content, isNews, 1); // communityid hardcoded for now
+                var response = await _dbConnection.CreatePost(title, content, isNews, 1, userId); // communityid hardcoded for now
 
                 if (response == null || !response.IsSuccess)
                 {

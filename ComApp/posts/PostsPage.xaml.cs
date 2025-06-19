@@ -1,6 +1,7 @@
 using comApp.db;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
+using System.Globalization;
 
 namespace comApp.posts
 {
@@ -74,6 +75,45 @@ namespace comApp.posts
         private async void OnCreatePostClicked(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new CreatePostPage());
+        }
+
+        private async void OnLikeButtonClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is Post post)
+            {
+                try
+                {
+                    ApiResponse result;
+                    if (post.IsLikedByCurrentUser)
+                    {
+                        result = await _dbConnection.UnlikePost(post.Id, userId);
+                    }
+                    else
+                    {
+                        result = await _dbConnection.LikePost(post.Id, userId);
+                    }
+
+                    if (result.IsSuccess)
+                    {
+                        post.IsLikedByCurrentUser = !post.IsLikedByCurrentUser;
+                        post.LikeCount += post.IsLikedByCurrentUser ? 1 : -1;
+
+                        // Refresh UI
+                        NewsPostsCollectionView.ItemsSource = null;
+                        UserPostsCollectionView.ItemsSource = null;
+                        NewsPostsCollectionView.ItemsSource = _newsPosts;
+                        UserPostsCollectionView.ItemsSource = _userPosts;
+                    }
+                    else
+                    {
+                        await DisplayAlert("Error", "Could not update like status.", "OK");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlert("Error", ex.Message, "OK");
+                }
+            }
         }
 
         private async Task CheckUser()

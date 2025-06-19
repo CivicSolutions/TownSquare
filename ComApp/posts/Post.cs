@@ -13,6 +13,12 @@ namespace comApp.posts
         [JsonProperty("isNews")]
         public int IsNews { get; set; }
 
+        [JsonProperty("likeCount")]
+        public int LikeCount { get; set; }
+
+        [JsonProperty("isLikedByCurrentUser")]
+        public bool IsLikedByCurrentUser { get; set; }
+
     }
     public class HelpPosts
     {

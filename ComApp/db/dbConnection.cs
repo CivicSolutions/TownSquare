@@ -177,9 +177,9 @@ namespace comApp.db
         public Task<ApiResponse> GetPostById(int communityId, int id) =>
             GetRequest($"/Post/GetById?communityId={communityId}&id={id}");
 
-        public Task<ApiResponse> CreatePost(string content, int isNews, int communityId)
+        public Task<ApiResponse> CreatePost(string title, string content, int isNews, int communityId, string userId)
         {
-            var body = new { content, isNews, communityId };
+            var body = new { title, content, isNews, communityId, userId };
             return PostRequest("/Post", body);
         }
 
