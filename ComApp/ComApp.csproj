@@ -61,6 +61,7 @@
 	<ItemGroup>
 	  <None Remove="Resources\Images\account_icon.jpg" />
 	  <None Remove="Resources\Images\close_icon.png" />
+	  <None Remove="Resources\Images\communities_icon.png" />
 	  <None Remove="Resources\Images\create_pin.jpg" />
 	  <None Remove="Resources\Images\engineer.png" />
 	  <None Remove="Resources\Images\help.png" />

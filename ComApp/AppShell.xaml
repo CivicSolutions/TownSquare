@@ -46,6 +46,8 @@
         <ShellContent Route="HelpPostsPage" Title="Help Posts" Icon="help_post.jpg" ContentTemplate="{DataTemplate post:HelpPostsPage}" />
 
         <ShellContent Route="AccountSettingsPage" Title="Account" Icon="account_icon.jpg" ContentTemplate="{DataTemplate account:AccountSettingsPage}" />
+        
+        <ShellContent Route="communitiesPage" Title="Communities" Icon="communities_icon.png" ContentTemplate="{DataTemplate com:CommunitiesPage}" />
 
         <ShellContent
         Title="DevTools"
