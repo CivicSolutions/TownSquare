@@ -14,6 +14,7 @@
                                 <Label Text="{Binding name}" FontAttributes="Bold" />
                                 <Label Text="{Binding locaction}" />
                                 <Label Text="{Binding bio}" />
+                                <Label Text="{Binding Status}" FontSize="14" TextColor="Gray" />
                                 <Button Text="Request Membership" Clicked="OnRequestClicked" />
                             </StackLayout>
                         </ViewCell>

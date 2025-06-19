@@ -69,5 +69,47 @@ namespace comApp.communities
                 return new ApiResponse { IsSuccessStatusCode = false, ErrorMessage = ex.Message };
             }
         }
+
+        public static async Task<string> GetMembershipStatus(int communityId, string userId)
+        {
+            var response = await GetRequest($"/Community/MembershipRequests/{communityId}");
+
+            if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(response.Content))
+                return "Unknown";
+
+            try
+            {
+                var list = JsonSerializer.Deserialize<List<MembershipRequest>>(response.Content, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                var match = list?.FirstOrDefault(req => req.userId == userId);
+
+                if (match == null)
+                    return "Unrequested";
+
+                return match.status switch
+                {
+                    0 => "Pending",
+                    1 => "Accepted",
+                    2 => "Declined",
+                    _ => "Unknown"
+                };
+            }
+            catch
+            {
+                return "Error";
+            }
+        }
+
+        private class MembershipRequest
+        {
+            public string userId { get; set; }
+            public int communityId { get; set; }
+            public int status { get; set; }
+        }
+
+
     }
 }

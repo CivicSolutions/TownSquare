@@ -1,9 +1,9 @@
-namespace comApp.account;
 using comApp.login;
 using comApp.db;
 using Microsoft.Maui.Controls;
 using Newtonsoft.Json.Linq;
 
+namespace comApp.account;
 public partial class AccountSettingsPage : ContentPage
 {
     public dbConnection _dbConnection;
@@ -29,7 +29,7 @@ public partial class AccountSettingsPage : ContentPage
 
         dynamic userData = Newtonsoft.Json.JsonConvert.DeserializeObject(response.Content);
 
-        // Assign values to UI controls directly
+
         firstNameLabel.Text = userData.firstName ?? "No first name";
         lastNameLabel.Text = userData.lastName ?? "No last name";
         descriptionLabel.Text = userData.description ?? "(No description)";

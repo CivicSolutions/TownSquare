@@ -1,9 +1,8 @@
-using comApp;
-using comApp.communities;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
+using comApp.communities;
 
 namespace comApp.communities;
+
 public partial class CommunitiesPage : ContentPage
 {
     private List<Community> _communities = new();
@@ -20,11 +19,9 @@ public partial class CommunitiesPage : ContentPage
 
         if (response.IsSuccessStatusCode)
         {
-            var json = response.Content;
-
             try
             {
-                var communities = JsonSerializer.Deserialize<List<Community>>(json, new JsonSerializerOptions
+                var communities = JsonSerializer.Deserialize<List<Community>>(response.Content, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
@@ -32,6 +29,19 @@ public partial class CommunitiesPage : ContentPage
                 if (communities != null)
                 {
                     _communities = communities;
+
+                    foreach (var c in _communities)
+                        c.Status = "Loading...";
+
+                    CommunitiesListView.ItemsSource = _communities;
+                    string userId = App.UserId; 
+                    foreach (var community in _communities)
+                    {
+                        var status = await ApiService.GetMembershipStatus(community.id, userId);
+                        community.Status = status;
+                    }
+
+                    CommunitiesListView.ItemsSource = null;
                     CommunitiesListView.ItemsSource = _communities;
                 }
             }
@@ -50,12 +60,15 @@ public partial class CommunitiesPage : ContentPage
     {
         if (sender is Button button && button.BindingContext is Community selectedCommunity)
         {
-            string userId = App.UserId; 
+            string userId = App.UserId;
             var response = await RequestMembership(userId, selectedCommunity.id);
 
             if (response.IsSuccessStatusCode)
             {
                 await DisplayAlert("Success", $"Membership request sent to {selectedCommunity.name}", "OK");
+                selectedCommunity.Status = "Pending";
+                CommunitiesListView.ItemsSource = null;
+                CommunitiesListView.ItemsSource = _communities;
             }
             else
             {
