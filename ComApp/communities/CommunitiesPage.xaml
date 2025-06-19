@@ -10,11 +10,11 @@
                     <DataTemplate>
                         <ViewCell>
                             <StackLayout>
-                                <Label Text="{Binding Name}" />
-                                <Label Text="{Binding Bio}" />
-                                <Button Text="Request Membership" 
-                                    Command="{Binding Source={x:Reference communitiesPage}, Path=BindingContext.RequestMembershipCommand}" 
-                                    CommandParameter="{Binding .}" />
+                                <Label Text="{Binding name}" />
+                                <Label Text="{Binding locaction}" />
+                                <Label Text="{Binding bio}" />
+                                
+                                <Button Text="Request Membership" Clicked="OnRequestClicked" />
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>

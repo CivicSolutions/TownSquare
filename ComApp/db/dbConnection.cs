@@ -87,7 +87,7 @@ namespace comApp.db
         // COMMUNITY
         // -------------------------------
 
-        public Task<ApiResponse> GetAllCommunities() => GetRequest("/Community/GetAll");
+        public Task<ApiResponse> GetAllCommunities() => GetRequest("/Community");
 
         public Task<ApiResponse> GetCommunityById(int id) => GetRequest($"/Community/GetById/{id}");
 
