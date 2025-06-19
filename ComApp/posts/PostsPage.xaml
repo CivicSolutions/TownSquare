@@ -32,17 +32,17 @@
                                                FontAttributes="Bold" 
                                                TextColor="#444"/>
                                         <Button
-                                            Clicked="OnLikeButtonClicked"
-                                            CommandParameter="{Binding .}"
-                                            Padding="10"
-                                            CornerRadius="20"
-                                            BackgroundColor="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonBackgroundConverter}}"
-                                            TextColor="White"
-                                            FontSize="18"
-                                            FontFamily="FontAwesomeSolid" 
-                                            Text="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonIconConverter}}"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center" />
+                                                Clicked="OnLikeButtonClicked"
+                                                CommandParameter="{Binding .}"
+                                                Padding="10"
+                                                CornerRadius="20"
+                                                BackgroundColor="{Binding LikeBackgroundColor}"
+                                                TextColor="White"
+                                                FontSize="18"
+                                                FontFamily="FontAwesomeSolid"
+                                                Text="{Binding LikeIcon}"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center" />
                                     </StackLayout>
                                 </StackLayout>
                             </Frame>
@@ -73,17 +73,17 @@
                                                FontAttributes="Bold" 
                                                TextColor="#444"/>
                                         <Button
-                                            Clicked="OnLikeButtonClicked"
-                                            CommandParameter="{Binding .}"
-                                            Padding="10"
-                                            CornerRadius="20"
-                                            BackgroundColor="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonBackgroundConverter}}"
-                                            TextColor="White"
-                                            FontSize="18"
-                                            FontFamily="FontAwesomeSolid" 
-                                            Text="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonIconConverter}}"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center" />
+                                                Clicked="OnLikeButtonClicked"
+                                                CommandParameter="{Binding .}"
+                                                Padding="10"
+                                                CornerRadius="20"
+                                                BackgroundColor="{Binding LikeBackgroundColor}"
+                                                TextColor="White"
+                                                FontSize="18"
+                                                FontFamily="FontAwesomeSolid"
+                                                Text="{Binding LikeIcon}"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center" />
                                     </StackLayout>
                                 </StackLayout>
                             </Frame>

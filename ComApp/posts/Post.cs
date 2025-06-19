@@ -18,7 +18,8 @@ namespace comApp.posts
 
         [JsonProperty("isLikedByCurrentUser")]
         public bool IsLikedByCurrentUser { get; set; }
-
+        public string LikeIcon => IsLikedByCurrentUser ? "\uf004" : "\uf08a";
+        public Color LikeBackgroundColor => IsLikedByCurrentUser ? Color.FromArgb("#E0245E") : Color.FromArgb("#bbb");
     }
     public class HelpPosts
     {
