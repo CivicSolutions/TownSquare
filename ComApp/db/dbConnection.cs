@@ -116,21 +116,20 @@ namespace comApp.db
         // HELP POST
         // -------------------------------
 
-        public Task<ApiResponse> GetHelpPosts() => GetRequest("/HelpPost/GetHelpPosts");
+        public Task<ApiResponse> GetHelpPosts() => GetRequest("/HelpPost");
 
-        public Task<ApiResponse> AddHelpPost(int id, string title, string description, double price, string telephone, DateTime postedAt, string userId)
+        public Task<ApiResponse> AddHelpPost(string title, string content, double price, int communityId, string telephone, string userId)
         {
             var body = new
             {
-                id,
                 title,
-                description,
+                content,
+                userId,
+                communityId,
                 price = (int)price,
-                telephone,
-                postedAt = postedAt.ToString("o"),
-                userId
+                telephone
             };
-            return PostRequest("/HelpPost/AddHelpPost", body);
+            return PostRequest("/HelpPost", body);
         }
 
 

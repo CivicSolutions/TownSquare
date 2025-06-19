@@ -102,59 +102,81 @@ public partial class HelpPost : ContentPage
 
     private async void OnSubmitPostClicked(object sender, EventArgs e)
     {
+        Console.WriteLine("Submit button clicked.");
+
         if (string.IsNullOrWhiteSpace(titleEntry.Text) || titleEntry.Text.Length > 50)
         {
+            Console.WriteLine($"Title validation failed. Value: '{titleEntry.Text}'");
             titleErrorLabel.Text = string.IsNullOrWhiteSpace(titleEntry.Text) ? "Title cannot be empty" : "Title must be maximum 50 characters long";
             return;
         }
 
         if (string.IsNullOrWhiteSpace(descriptionEditor.Text) || descriptionEditor.Text.Length > 300)
         {
+            Console.WriteLine($"Description validation failed. Length: {descriptionEditor.Text?.Length}");
             descriptionErrorLabel.Text = string.IsNullOrWhiteSpace(descriptionEditor.Text) ? "Description cannot be empty" : "Description must be maximum 300 characters long";
             return;
         }
 
         if (string.IsNullOrWhiteSpace(priceEntry.Text))
         {
+            Console.WriteLine("Price is empty.");
             priceErrorLabel.Text = "Price cannot be empty";
             return;
         }
+
         if (IsValidPrice(priceEntry.Text))
         {
+            Console.WriteLine($"Price validation failed. Value: '{priceEntry.Text}'");
             priceErrorLabel.Text = "Price must be a number for example: 20";
             return;
         }
 
         if (string.IsNullOrWhiteSpace(telephoneEntry.Text))
         {
+            Console.WriteLine("Telephone number is empty.");
             telephoneErrorLabel.Text = "Telephone number cannot be empty";
             return;
         }
 
         if (!IsValidSwissPhoneNumber(telephoneEntry.Text))
         {
+            Console.WriteLine($"Telephone number validation failed. Value: '{telephoneEntry.Text}'");
             telephoneErrorLabel.Text = "Invalid Swiss telephone number format (e.g., 076 000 00 00)";
             return;
         }
 
-        int id = 0;
         string userId = App.UserId;
         string title = titleEntry.Text;
-        string description = descriptionEditor.Text;
+        string content = descriptionEditor.Text;
         string InputPrice = priceEntry.Text;
+        int communityId = 1;
         int price;
         int.TryParse(InputPrice, out price);
-        DateTime postedAt = DateTime.UtcNow;
         string telephone = telephoneEntry.Text;
 
-        var response = await _dbConnection.AddHelpPost(id, title, description, price, telephone, postedAt, userId);
+        Console.WriteLine("Validation passed. Preparing to submit post:");
+        Console.WriteLine($"UserId: {userId}, Title: {title}, Description: {content}, Price: {price}, Telephone: {telephone}, CommunityId: {communityId}");
+
+        var response = await _dbConnection.AddHelpPost(title, content, communityId, price, telephone, userId);
 
         if (response != null && response.IsSuccess)
         {
+            Console.WriteLine("Post submission succeeded.");
             await Navigation.PushAsync(new HelpPostsPage());
         }
         else
         {
+            Console.WriteLine("Post submission failed.");
+            if (response == null)
+            {
+                Console.WriteLine("Response is null.");
+            }
+            else
+            {
+                Console.WriteLine($"StatusCode: {response.StatusCode}, ErrorMessage: {response.ErrorMessage}");
+            }
+
             string message = response == null
                 ? "There was an issue creating the help post. Please try again."
                 : response.StatusCode == 401
@@ -164,12 +186,13 @@ public partial class HelpPost : ContentPage
         }
     }
 
+
     private bool IsValidSwissPhoneNumber(string phoneNumber)
     {
-        // Regular expression pattern for Swiss phone number format: 000 000 00 00
-        string pattern = @"^\d{3} \d{3} \d{2} \d{2}$";
-        return Regex.IsMatch(phoneNumber, pattern);
+        string normalized = phoneNumber.Replace(" ", "");
+        return Regex.IsMatch(normalized, @"^\d{10}$");
     }
+
     private bool IsValidPrice(string InputPrice)
     {
         int price;
