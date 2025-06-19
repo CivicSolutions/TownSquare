@@ -1,0 +1,13 @@
+﻿<Project>
+  <Target Name="LoadEnvVars" BeforeTargets="PrepareForBuild">
+    <ReadLinesFromFile File=".env">
+      <Output TaskParameter="Lines" ItemName="EnvLines" />
+    </ReadLinesFromFile>
+
+    <PropertyGroup>
+      <GOOGLE_MAPS_API_KEY>
+        $([System.Text.RegularExpressions.Regex]::Match('%(EnvLines.Identity)', '^GOOGLE_MAPS_API_KEY=(.*)$').Groups[1].Value)
+      </GOOGLE_MAPS_API_KEY>
+    </PropertyGroup>
+  </Target>
+</Project>

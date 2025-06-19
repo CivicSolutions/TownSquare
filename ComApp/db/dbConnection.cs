@@ -208,7 +208,60 @@ namespace comApp.db
             return PostRequest("/Auth/Login", body);
         }
 
-        public Task<ApiResponse> GetUserById(string userId) => GetRequest($"/User/{userId}");
+        public async Task<ApiResponse> GetUserById(string userId)
+        {
+            var userResponse = await GetRequest($"/User/{userId}");
+            if (userResponse == null || !userResponse.IsSuccess)
+                return userResponse;
+
+            string imageUrl = null;
+
+            var imageResponse = await GetRequest($"https://image-api.com/api/images/{userId}"); 
+            if (imageResponse != null && imageResponse.IsSuccess)
+            {
+                try
+                {
+                    dynamic imageData = JsonConvert.DeserializeObject(imageResponse.Content);
+                    imageUrl = imageData?.image; 
+                }
+                catch { }
+            }
+
+            try
+            {
+                dynamic userData = JsonConvert.DeserializeObject(userResponse.Content);
+                userData.profileImage = imageUrl ?? "";
+                string mergedJson = JsonConvert.SerializeObject(userData);
+                return new ApiResponse(true, mergedJson);
+            }
+            catch
+            {
+                return new ApiResponse(false, "Failed to merge user and image data.");
+            }
+        }
+
+        public async Task<ApiResponse> UploadUserImage(string userId, FileResult imageFile)
+        {
+            if (imageFile == null)
+                return new ApiResponse(false, "No image provided.");
+
+            using var stream = await imageFile.OpenReadAsync();
+            using var content = new MultipartFormDataContent();
+
+            var imageContent = new StreamContent(stream);
+            imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+
+            content.Add(imageContent, "image", imageFile.FileName);
+            content.Add(new StringContent(userId), "userId");
+
+            using var client = new HttpClient { BaseAddress = new Uri("https://image-api.com") }; // Replace this
+            var response = await client.PostAsync("/api/images/upload", content);
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            return response.IsSuccessStatusCode
+                ? new ApiResponse(true, responseBody)
+                : new ApiResponse(false, responseBody, (int)response.StatusCode, response.ReasonPhrase);
+        }
 
         // public Task<string> GetUserBySessionToken(string sessionToken) => GetRequest($"/User/GetByToken/{sessionToken}");
 
@@ -221,4 +274,6 @@ namespace comApp.db
 
         public Task<ApiResponse> DeleteUser(int userId) => DeleteRequest($"/User/{userId}");
     }
+
 }
+
