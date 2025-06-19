@@ -2,6 +2,8 @@ namespace comApp.posts;
 using Microsoft.Maui.Controls;
 using System.Text.RegularExpressions;
 using comApp.db;
+using Newtonsoft.Json;
+using static comApp.posts.HelpPostsPage;
 
 public partial class HelpPost : ContentPage
 {
@@ -102,46 +104,39 @@ public partial class HelpPost : ContentPage
 
     private async void OnSubmitPostClicked(object sender, EventArgs e)
     {
-        Console.WriteLine("Submit button clicked.");
 
         if (string.IsNullOrWhiteSpace(titleEntry.Text) || titleEntry.Text.Length > 50)
         {
-            Console.WriteLine($"Title validation failed. Value: '{titleEntry.Text}'");
             titleErrorLabel.Text = string.IsNullOrWhiteSpace(titleEntry.Text) ? "Title cannot be empty" : "Title must be maximum 50 characters long";
             return;
         }
 
         if (string.IsNullOrWhiteSpace(descriptionEditor.Text) || descriptionEditor.Text.Length > 300)
         {
-            Console.WriteLine($"Description validation failed. Length: {descriptionEditor.Text?.Length}");
             descriptionErrorLabel.Text = string.IsNullOrWhiteSpace(descriptionEditor.Text) ? "Description cannot be empty" : "Description must be maximum 300 characters long";
             return;
         }
 
         if (string.IsNullOrWhiteSpace(priceEntry.Text))
         {
-            Console.WriteLine("Price is empty.");
             priceErrorLabel.Text = "Price cannot be empty";
             return;
         }
 
         if (IsValidPrice(priceEntry.Text))
         {
-            Console.WriteLine($"Price validation failed. Value: '{priceEntry.Text}'");
             priceErrorLabel.Text = "Price must be a number for example: 20";
             return;
         }
 
         if (string.IsNullOrWhiteSpace(telephoneEntry.Text))
         {
-            Console.WriteLine("Telephone number is empty.");
             telephoneErrorLabel.Text = "Telephone number cannot be empty";
             return;
         }
 
         if (!IsValidSwissPhoneNumber(telephoneEntry.Text))
         {
-            Console.WriteLine($"Telephone number validation failed. Value: '{telephoneEntry.Text}'");
             telephoneErrorLabel.Text = "Invalid Swiss telephone number format (e.g., 076 000 00 00)";
             return;
         }
@@ -154,34 +149,29 @@ public partial class HelpPost : ContentPage
         int price;
         int.TryParse(InputPrice, out price);
         string telephone = telephoneEntry.Text;
+        var postResponse = await _dbConnection.AddHelpPost(title, content, price, communityId, telephone, userId);
 
-        Console.WriteLine("Validation passed. Preparing to submit post:");
-        Console.WriteLine($"UserId: {userId}, Title: {title}, Description: {content}, Price: {price}, Telephone: {telephone}, CommunityId: {communityId}");
-
-        var response = await _dbConnection.AddHelpPost(title, content, communityId, price, telephone, userId);
-
-        if (response != null && response.IsSuccess)
+        if (postResponse != null && postResponse.IsSuccess)
         {
-            Console.WriteLine("Post submission succeeded.");
             await Navigation.PushAsync(new HelpPostsPage());
         }
         else
         {
             Console.WriteLine("Post submission failed.");
-            if (response == null)
+            if (postResponse == null)
             {
                 Console.WriteLine("Response is null.");
             }
             else
             {
-                Console.WriteLine($"StatusCode: {response.StatusCode}, ErrorMessage: {response.ErrorMessage}");
+                Console.WriteLine($"StatusCode: {postResponse.StatusCode}, ErrorMessage: {postResponse.ErrorMessage}");
             }
 
-            string message = response == null
+            string message = postResponse == null
                 ? "There was an issue creating the help post. Please try again."
-                : response.StatusCode == 401
+                : postResponse.StatusCode == 401
                     ? "You are not authorized to create a help post."
-                    : $"There was an issue creating the help post: {response.ErrorMessage}";
+                    : $"There was an issue creating the help post: {postResponse.ErrorMessage}";
             await DisplayAlert("Error", message, "OK");
         }
     }
