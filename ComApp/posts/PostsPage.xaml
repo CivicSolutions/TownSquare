@@ -4,53 +4,94 @@
              x:Class="comApp.posts.PostsPage"
              Title="Posts">
 
-        <ContentPage.Resources>
-        <local:TimeAgoConverter x:Key="TimeAgoConverter" /> <!-- wäre für den check vor wie viel das post gepostet wurde-->
+    <ContentPage.Resources>
+        <local:TimeAgoConverter x:Key="TimeAgoConverter" />
+        <local:LikeButtonBackgroundConverter x:Key="LikeButtonBackgroundConverter" />
+        <local:LikeButtonIconConverter x:Key="LikeButtonIconConverter" />
     </ContentPage.Resources>
+
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Padding="20">
 
-            <!-- Display News Posts -->
-            <Label Text="News Posts" FontSize="22" HorizontalOptions="Center" Margin="0, 0, 0, 15"/>
-            <CollectionView x:Name="NewsPostsCollectionView">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <!-- Define how each news post should be displayed -->
-                        <Frame Padding="10" CornerRadius="10" Margin="0,0,0,10" HasShadow="True" BackgroundColor="White">
-                            <StackLayout>
-                                <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" Margin="0,0,0,5" />
-                                <Label Text="{Binding Content}" Margin="0,0,0,5" />
-                                <!--<Label Text="{Binding PostTime, Converter={StaticResource TimeAgoConverter}}" Margin="0,0,0,5" TextColor="Black"/>  VOR Z.B. 1 STUNDE-->
-                            </StackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                <!-- Display News Posts -->
+                <Label Text="News Posts" FontSize="22" HorizontalOptions="Center" Margin="0, 0, 0, 15"/>
+                <CollectionView x:Name="NewsPostsCollectionView">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="10" CornerRadius="10" Margin="0,0,0,10" HasShadow="True" BackgroundColor="White">
+                                <StackLayout>
+                                    <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" Margin="0,0,0,5" />
+                                    <Label Text="{Binding Content}" Margin="0,0,0,5" />
+                                    <!--<Label Text="{Binding PostTime, Converter={StaticResource TimeAgoConverter}}" Margin="0,0,0,5" TextColor="Black"/>-->
 
-            <!-- Button to create a new post -->
-            <Button Text="Create a Post" Clicked="OnCreatePostClicked" 
-            HorizontalOptions="Center" Margin="0,20,0,20" FontSize="16"
-            Style="{StaticResource GreyButtonStyle}"/>
+                                    <StackLayout Orientation="Horizontal" HorizontalOptions="Start" Spacing="8" VerticalOptions="Center">
+                                        <Label Text="{Binding LikeCount}" 
+                                               VerticalOptions="Center" 
+                                               FontSize="16" 
+                                               FontAttributes="Bold" 
+                                               TextColor="#444"/>
+                                        <Button
+                                            Clicked="OnLikeButtonClicked"
+                                            CommandParameter="{Binding .}"
+                                            Padding="10"
+                                            CornerRadius="20"
+                                            BackgroundColor="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonBackgroundConverter}}"
+                                            TextColor="White"
+                                            FontSize="18"
+                                            FontFamily="FontAwesomeSolid" 
+                                            Text="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonIconConverter}}"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center" />
+                                    </StackLayout>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-            <!-- Display User Posts -->
-            <Label Text="User Posts" FontSize="22" HorizontalOptions="Center" Margin="0, 0, 0, 15"/>
-            <CollectionView x:Name="UserPostsCollectionView">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <!-- Define how each user post should be displayed -->
-                        <Frame Padding="10" CornerRadius="10" Margin="0,0,0,10" HasShadow="True" BackgroundColor="White">
-                            <StackLayout>
-                                <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" Margin="0,0,0,5" />
-                                <Label Text="{Binding Content}" Margin="0,0,0,5" />
-                                <!--<Label Text="{Binding PostTime, Converter={StaticResource TimeAgoConverter}}" Margin="0,0,0,5" TextColor="Black"/> -->
-                            </StackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </StackLayout>
+                <!-- Button to create a new post -->
+                <Button Text="Create a Post" Clicked="OnCreatePostClicked" 
+                        HorizontalOptions="Center" Margin="0,20,0,20" FontSize="16"
+                        Style="{StaticResource GreyButtonStyle}"/>
+
+                <!-- Display User Posts -->
+                <Label Text="User Posts" FontSize="22" HorizontalOptions="Center" Margin="0, 0, 0, 15"/>
+                <CollectionView x:Name="UserPostsCollectionView">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="10" CornerRadius="10" Margin="0,0,0,10" HasShadow="True" BackgroundColor="White">
+                                <StackLayout>
+                                    <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" Margin="0,0,0,5" />
+                                    <Label Text="{Binding Content}" Margin="0,0,0,5" />
+                                    <!--<Label Text="{Binding PostTime, Converter={StaticResource TimeAgoConverter}}" Margin="0,0,0,5" TextColor="Black"/>-->
+
+                                    <StackLayout Orientation="Horizontal" HorizontalOptions="Start" Spacing="8" VerticalOptions="Center">
+                                        <Label Text="{Binding LikeCount}" 
+                                               VerticalOptions="Center" 
+                                               FontSize="16" 
+                                               FontAttributes="Bold" 
+                                               TextColor="#444"/>
+                                        <Button
+                                            Clicked="OnLikeButtonClicked"
+                                            CommandParameter="{Binding .}"
+                                            Padding="10"
+                                            CornerRadius="20"
+                                            BackgroundColor="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonBackgroundConverter}}"
+                                            TextColor="White"
+                                            FontSize="18"
+                                            FontFamily="FontAwesomeSolid" 
+                                            Text="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonIconConverter}}"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center" />
+                                    </StackLayout>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
         </ScrollView>
     </ContentPage.Content>
-    
+
 </ContentPage>
