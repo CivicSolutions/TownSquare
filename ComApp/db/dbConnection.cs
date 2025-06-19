@@ -171,8 +171,8 @@ namespace comApp.db
         // POST
         // -------------------------------
 
-        public Task<ApiResponse> GetAllPosts(int communityId) =>
-            GetRequest($"/Post/GetAll?communityId={communityId}");
+        public Task<ApiResponse> GetAllPosts(string userId) =>
+            GetRequest($"/Post/GetAll?userId={userId}");
 
         public Task<ApiResponse> GetPostById(int communityId, int id) =>
             GetRequest($"/Post/GetById?communityId={communityId}&id={id}");
@@ -191,6 +191,17 @@ namespace comApp.db
 
         public Task<ApiResponse> DeletePost(int communityId, int postId) =>
             DeleteRequest($"/Post?communityId={communityId}&postId={postId}");
+
+        public Task<ApiResponse> LikePost(int postId, string userId)
+        {
+            return PostRequest($"/Post/Like?postId={postId}&userId={userId}", null);
+        }
+
+        public Task<ApiResponse> UnlikePost(int postId, string userId)
+        {
+            return PostRequest($"/Post/Unlike?postId={postId}&userId={userId}", null);
+        }
+
 
         // -------------------------------
         // USER

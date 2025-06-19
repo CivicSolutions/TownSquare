@@ -1,4 +1,6 @@
-﻿namespace comApp.posts
+﻿using Newtonsoft.Json;
+
+namespace comApp.posts
 {
     public class Post
     {
@@ -8,6 +10,8 @@
         public string UserId { get; set; }
         public string UserName { get; set; }
         public DateTime PostTime { get; set; }
+        [JsonProperty("isNews")]
+        public int IsNews { get; set; }
 
     }
     public class HelpPosts
