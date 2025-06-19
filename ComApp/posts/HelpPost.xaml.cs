@@ -137,8 +137,8 @@ public partial class HelpPost : ContentPage
             return;
         }
 
+        int id = 0;
         string userId = App.UserId;
-        Console.WriteLine("YOU ARE USING FOLLOWING USER ID: " + userId);
         string title = titleEntry.Text;
         string description = descriptionEditor.Text;
         string InputPrice = priceEntry.Text;
@@ -147,7 +147,7 @@ public partial class HelpPost : ContentPage
         DateTime postedAt = DateTime.UtcNow;
         string telephone = telephoneEntry.Text;
 
-        var response = await _dbConnection.AddHelpPost(title, description, price, telephone, postedAt, userId);
+        var response = await _dbConnection.AddHelpPost(id, title, description, price, telephone, postedAt, userId);
 
         if (response != null && response.IsSuccess)
         {

@@ -55,21 +55,6 @@ public partial class HelpPin : ContentPage
         }
     }
 
-    private async void OnUploadPictureClicked(object sender, EventArgs e)
-    {
-        var result = await FilePicker.PickAsync(new PickOptions
-        {
-            PickerTitle = "Select an image",
-            FileTypes = FilePickerFileType.Images,
-        });
-
-        if (result != null)
-        {
-            var stream = await result.OpenReadAsync();
-            selectedImage.Source = ImageSource.FromStream(() => stream);
-        }
-    }
-
     private void OnTitleEntryTextChanged(object sender, TextChangedEventArgs e)
     {
         string title = e.NewTextValue;
