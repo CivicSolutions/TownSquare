@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="comApp.profileModal.ProfileModalPage"
+             BackgroundColor="#000000AA"  
+             Padding="40,100"
+             NavigationPage.HasNavigationBar="False"
+>
+    <Frame BackgroundColor="White"
+           CornerRadius="20"
+           Padding="20"
+           VerticalOptions="Center"
+           HorizontalOptions="Center"
+           WidthRequest="300"
+           HasShadow="True">
+        <StackLayout Spacing="20" HorizontalOptions="Center">
+
+            <Frame CornerRadius="50"
+                   HeightRequest="100"
+                   WidthRequest="100"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center">
+                <Image x:Name="profileImage"
+                       Aspect="AspectFill"
+                       HeightRequest="100"
+                       WidthRequest="100" />
+            </Frame>
+
+            <Label x:Name="nameLabel"
+                   FontSize="24"
+                   TextColor="Black"
+                   HorizontalOptions="Center"
+            />
+
+            <Button Text="Close"
+                    Clicked="OnCloseClicked"
+                    BackgroundColor="Gray"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="10,5"/>
+        </StackLayout>
+    </Frame>
+</ContentPage>

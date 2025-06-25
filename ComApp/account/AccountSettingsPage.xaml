@@ -3,27 +3,35 @@
              x:Class="comApp.account.AccountSettingsPage"
              Title="AccountSettingsPage">
 
-    <StackLayout VerticalOptions="Start" HorizontalOptions="FillAndExpand" Padding="20">
+    <StackLayout VerticalOptions="Start" HorizontalOptions="FillAndExpand" Padding="20" Spacing="20">
+            
+        <Frame CornerRadius="75"
+               HeightRequest="150"
+               WidthRequest="150"
+               HorizontalOptions="Center"
+               VerticalOptions="Start"
+               HasShadow="True">
+            <Image x:Name="profileImage"
+                   Aspect="AspectFill"
+                   HeightRequest="150"
+                   WidthRequest="150" />
+        </Frame>
+
         <Label  x:Name="firstNameLabel" 
                 FontSize="Large" 
-                Margin="0,0,0,10" 
                 HorizontalOptions="Center" />
 
         <Label  x:Name="lastNameLabel" 
                 FontSize="Large" 
-                Margin="0,0,0,10" 
                 HorizontalOptions="Center" />
 
         <Label  x:Name="descriptionLabel" 
                 FontSize="Medium" 
-                Margin="0,0,0,20" 
                 HorizontalOptions="Center" />
-
 
         <Button Text="Edit"
                 Clicked="OnEditClicked"
                 Style="{StaticResource GreyButtonStyle}"
-                Margin="0, 0, 0, 10"
                 HorizontalOptions="Center"/>
 
         <Button Text="Logout"
@@ -34,5 +42,6 @@
                 HorizontalOptions="Center"
                 VerticalOptions="End" 
                 Clicked="OnLogoutButtonClicked"/>
+
     </StackLayout>
 </ContentPage>

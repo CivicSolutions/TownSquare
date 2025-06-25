@@ -264,19 +264,47 @@ namespace comApp.db
             using var content = new MultipartFormDataContent();
 
             var imageContent = new StreamContent(stream);
-            imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+            imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
 
-            content.Add(imageContent, "image", imageFile.FileName);
-            content.Add(new StringContent(userId), "userId");
+            content.Add(imageContent, "Picture", imageFile.FileName); 
+            content.Add(new StringContent(userId), "UserId"); 
 
-            using var client = new HttpClient { BaseAddress = new Uri("https://image-api.com") }; // Replace this
-            var response = await client.PostAsync("/api/images/upload", content);
+            using var client = new HttpClient { BaseAddress = new Uri("http://mc.dominikmeister.com/") };
+
+            // ✅ Add Authorization header (replace this with actual logic for getting the user's token securely)
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "<YOUR_TOKEN_HERE>");
+
+            var response = await client.PostAsync("/api/ProfilePicture/Upload", content);
             var responseBody = await response.Content.ReadAsStringAsync();
 
             return response.IsSuccessStatusCode
                 ? new ApiResponse(true, responseBody)
                 : new ApiResponse(false, responseBody, (int)response.StatusCode, response.ReasonPhrase);
         }
+
+        
+        public async Task<ApiResponse> GetUserImage(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+                return new ApiResponse(false, "User ID is required.");
+
+            using var client = new HttpClient { BaseAddress = new Uri("http://mc.dominikmeister.com/") };
+
+            try
+            {
+                var response = await client.GetAsync($"/api/ProfilePicture/ImageFile?userId={userId}");
+                var responseBody = await response.Content.ReadAsStringAsync();
+
+                return response.IsSuccessStatusCode
+                    ? new ApiResponse(true, responseBody)
+                    : new ApiResponse(false, responseBody, (int)response.StatusCode, response.ReasonPhrase);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse(false, $"Exception occurred: {ex.Message}");
+            }
+        }
+
 
         // public Task<string> GetUserBySessionToken(string sessionToken) => GetRequest($"/User/GetByToken/{sessionToken}");
 

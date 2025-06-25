@@ -8,32 +8,34 @@
         <StackLayout Padding="20" Spacing="15">
 
             <Label Text="Edit Profile" FontSize="24" HorizontalOptions="Center" />
-
-            <!-- Profile Image -->
+            
             <Frame Padding="0" HeightRequest="150" WidthRequest="150" CornerRadius="75"
                    HorizontalOptions="Center" VerticalOptions="Center"
                    IsClippedToBounds="True" HasShadow="False" BackgroundColor="LightGray">
                 <Image x:Name="ProfileImage"
-                   HeightRequest="150"
-                   WidthRequest="150"
-                   Aspect="AspectFill"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   Margin="0,10"
-                   Source="default_profile.png" />
-
+                       HeightRequest="150"
+                       WidthRequest="150"
+                       Aspect="AspectFill"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Margin="0,10"
+                       Source="default_profile.png" />
             </Frame>
 
             <Button Text="Change Profile Picture"
                     Clicked="OnChangeProfilePictureClicked"
                     HorizontalOptions="Center"/>
 
-            <Label Text="Username" FontSize="Medium" />
-            <Entry x:Name="usernameEntry" Text="{Binding name}" Placeholder="Enter username" />
-            <Label x:Name="usernameErrorLabel" TextColor="Red" FontSize="Small" />
+            <Label Text="First Name" FontSize="Medium" />
+            <Entry x:Name="firstNameEntry" Placeholder="Enter first name" />
+            <Label x:Name="firstNameErrorLabel" TextColor="Red" FontSize="Small" />
+
+            <Label Text="Last Name" FontSize="Medium" />
+            <Entry x:Name="lastNameEntry" Placeholder="Enter last name" />
+            <Label x:Name="lastNameErrorLabel" TextColor="Red" FontSize="Small" />
 
             <Label Text="Bio" FontSize="Medium" />
-            <Editor x:Name="bioEditor" Text="{Binding description}" HeightRequest="120" Placeholder="Write your bio" />
+            <Editor x:Name="bioEditor" HeightRequest="120" Placeholder="Write your bio" />
             <Label x:Name="bioErrorLabel" TextColor="Red" FontSize="Small" />
 
             <Button Text="Save Changes"
