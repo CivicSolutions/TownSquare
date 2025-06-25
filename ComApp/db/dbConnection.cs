@@ -118,20 +118,24 @@ namespace comApp.db
 
         public Task<ApiResponse> GetHelpPosts() => GetRequest("/HelpPost");
 
-        public Task<ApiResponse> AddHelpPost(string title, string description, double price, string telephone, DateTime postedAt, string userId)
+        public Task<ApiResponse> AddHelpPost(string title, string content, double price, int communityId, string telephone, string userId)
         {
             var body = new
             {
                 title,
-                description,
+                content,
+                userId,
+                communityId,
                 price = (int)price,
-                telephone,
-                postedAt = postedAt.ToString("o"),
-                userId
+                telephone
             };
-            return PostRequest("/HelpPost/AddHelpPost", body);
+            return PostRequest("/HelpPost", body);
         }
 
+        public Task<ApiResponse> DeleteHelpPost(int id)
+        {
+            return DeleteRequest("/HelpPost?id=" + id);
+        }
 
         // -------------------------------
         // LOGIN
@@ -207,9 +211,9 @@ namespace comApp.db
         // USER
         // -------------------------------
 
-        public Task<ApiResponse> RegisterUser(string name, string email, string password, string description)
+        public Task<ApiResponse> RegisterUser(string email, string password, string firstName, string lastName, string description)
         {
-            var body = new { name, email, password, description };
+            var body = new { email, password, firstName, lastName, description };
             return PostRequest("/Auth/Register", body);
         }
 

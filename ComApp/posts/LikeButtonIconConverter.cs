@@ -7,7 +7,8 @@ namespace comApp.posts
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool isLiked = (bool)value;
-            return isLiked ? '\uf004' : '\uf08b'; // return char instead of string
+
+            return isLiked ? "\uf004" : "\uf08a";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;

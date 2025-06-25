@@ -74,6 +74,7 @@ public partial class HelpPostsPage : ContentPage
     {
         var button = (Button)sender;
         var selectedHelpPost = (HelpPosts)button.BindingContext;
+        int id = selectedHelpPost.Id;
 
         string loggedInUserId = App.UserId;
 
@@ -84,7 +85,7 @@ public partial class HelpPostsPage : ContentPage
         }
 
         string popupMessage = $"Title: {selectedHelpPost.Title}\n" +
-                              $"Description: {selectedHelpPost.Description}\n" +
+                              $"Description: {selectedHelpPost.Content}\n" +
                               $"Price: {selectedHelpPost.Price} CHF\n" +
                               $"Telephone: {selectedHelpPost.Telephone}\n\n" +
                               "Are you sure you want to accept this post?";
@@ -93,7 +94,7 @@ public partial class HelpPostsPage : ContentPage
 
         if (accept)
         {
-            // await _dbConnection.DeletePost($"/HelpPost/DeleteHelpPost/{selectedHelpPost.Id}");
+            await _dbConnection.DeleteHelpPost(id);
             LoadPosts();
         }
     }
