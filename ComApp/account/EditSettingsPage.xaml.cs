@@ -14,8 +14,9 @@ namespace comApp.account
         {
             InitializeComponent();
 
-            usernameEntry.TextChanged += OnUsernameEntryTextChanged;
-            bioEditor.TextChanged += OnBioEditorTextChanged;
+            firstNameEntry.TextChanged += OnFirstNameChanged;
+            lastNameEntry.TextChanged += OnLastNameChanged;
+            bioEditor.TextChanged += OnBioEditorChanged;
 
             ToolbarItems.Add(new ToolbarItem
             {
@@ -40,19 +41,22 @@ namespace comApp.account
             }
 
             dynamic userData = JsonConvert.DeserializeObject(response.Content);
-            BindingContext = userData;
+
+            firstNameEntry.Text = userData?.firstName;
+            lastNameEntry.Text = userData?.lastName;
+            bioEditor.Text = userData?.description;
 
             string imageUrl = userData?.profileImage;
             ProfileImage.Source = string.IsNullOrEmpty(imageUrl)
-                ? "default_profile.png" // 👈 Replace with local placeholder image
+                ? "default_profile.png"
                 : ImageSource.FromUri(new Uri(imageUrl));
         }
 
         private async void OnSaveChangesClicked(object sender, EventArgs e)
         {
             string userId = App.UserId;
-            var currentResponse = await _dbConnection.GetUserById(userId);
 
+            var currentResponse = await _dbConnection.GetUserById(userId);
             if (!currentResponse.IsSuccess)
             {
                 await DisplayAlert("Error", "Failed to get current user data.", "OK");
@@ -61,9 +65,12 @@ namespace comApp.account
 
             dynamic current = JsonConvert.DeserializeObject(currentResponse.Content);
             string email = current.email;
-            string password = current.password;
 
-            var updateResponse = await _dbConnection.UpdateUser(userId, email, password, usernameEntry.Text, bioEditor.Text);
+            string firstName = firstNameEntry.Text?.Trim();
+            string lastName = lastNameEntry.Text?.Trim();
+            string description = bioEditor.Text?.Trim();
+
+            var updateResponse = await _dbConnection.UpdateUser(userId, email, firstName, lastName, description);
             if (!updateResponse.IsSuccess)
             {
                 await DisplayAlert("Error", "Failed to update user data.", "OK");
@@ -75,8 +82,7 @@ namespace comApp.account
                 var imageResponse = await _dbConnection.UploadUserImage(userId, _newProfileImage);
                 if (!imageResponse.IsSuccess)
                 {
-                    await DisplayAlert("Warning", "Profile updated, but failed to upload profile image.", "OK");
-                    return;
+                    await DisplayAlert("Warning", "Profile updated, but image upload failed.", "OK");
                 }
             }
 
@@ -112,14 +118,21 @@ namespace comApp.account
                 await Navigation.PopAsync();
         }
 
-        private void OnUsernameEntryTextChanged(object sender, TextChangedEventArgs e)
+        private void OnFirstNameChanged(object sender, TextChangedEventArgs e)
         {
-            usernameErrorLabel.Text = e.NewTextValue.Length > 40
-                ? "Username must be maximum 40 characters long"
+            firstNameErrorLabel.Text = e.NewTextValue.Length > 40
+                ? "First name must be maximum 40 characters long"
                 : string.Empty;
         }
 
-        private void OnBioEditorTextChanged(object sender, TextChangedEventArgs e)
+        private void OnLastNameChanged(object sender, TextChangedEventArgs e)
+        {
+            lastNameErrorLabel.Text = e.NewTextValue.Length > 40
+                ? "Last name must be maximum 40 characters long"
+                : string.Empty;
+        }
+
+        private void OnBioEditorChanged(object sender, TextChangedEventArgs e)
         {
             bioErrorLabel.Text = e.NewTextValue.Length > 200
                 ? "Bio must be maximum 200 characters long"

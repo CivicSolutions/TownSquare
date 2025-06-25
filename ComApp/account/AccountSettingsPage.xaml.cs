@@ -1,9 +1,11 @@
 using comApp.login;
 using comApp.db;
 using Microsoft.Maui.Controls;
-using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System;
 
 namespace comApp.account;
+
 public partial class AccountSettingsPage : ContentPage
 {
     public dbConnection _dbConnection;
@@ -27,20 +29,30 @@ public partial class AccountSettingsPage : ContentPage
             return;
         }
 
-        dynamic userData = Newtonsoft.Json.JsonConvert.DeserializeObject(response.Content);
-
+        dynamic userData = JsonConvert.DeserializeObject(response.Content);
 
         firstNameLabel.Text = userData.firstName ?? "No first name";
         lastNameLabel.Text = userData.lastName ?? "No last name";
         descriptionLabel.Text = userData.description ?? "(No description)";
-    }
 
+        try
+        {
+            // Load profile image from direct URL
+            var imageUrl = $"http://mc.dominikmeister.com/api/ProfilePicture/ImageFile?userId={userId}";
+            profileImage.Source = ImageSource.FromUri(new Uri(imageUrl));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Failed to load profile image: {ex.Message}");
+            profileImage.Source = "account_icon.png";
+        }
+    }
 
     private async void CheckUser()
     {
         string userId = App.UserId;
 
-        if (userId is null or "")
+        if (string.IsNullOrWhiteSpace(userId))
         {
             await Navigation.PushAsync(new Login());
         }

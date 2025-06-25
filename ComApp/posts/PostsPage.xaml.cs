@@ -131,5 +131,16 @@ namespace comApp.posts
                 await DisplayAlert("Error", $"Failed to check user session: {ex.Message}", "OK");
             }
         }
+        
+        private async void OnPostTapped(object sender, EventArgs e)
+        {
+            if (sender is Frame frame && frame.BindingContext is Post post)
+            {
+                var profileModal = new comApp.profileModal.ProfileModalPage(post.UserId);
+                await Navigation.PushModalAsync(profileModal);
+            }
+        }
+
+
     }
 }

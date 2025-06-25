@@ -20,10 +20,10 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame Padding="10" CornerRadius="10" Margin="0,0,0,10" HasShadow="True" BackgroundColor="White">
+                                
                                 <StackLayout>
                                     <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" Margin="0,0,0,5" />
                                     <Label Text="{Binding Content}" Margin="0,0,0,5" />
-                                    <!--<Label Text="{Binding PostTime, Converter={StaticResource TimeAgoConverter}}" Margin="0,0,0,5" TextColor="Black"/>-->
 
                                     <StackLayout Orientation="Horizontal" HorizontalOptions="Start" Spacing="8" VerticalOptions="Center">
                                         <Label Text="{Binding LikeCount}" 
@@ -49,22 +49,22 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
-                <!-- Button to create a new post -->
+                
                 <Button Text="Create a Post" Clicked="OnCreatePostClicked" 
                         HorizontalOptions="Center" Margin="0,20,0,20" FontSize="16"
                         Style="{StaticResource GreyButtonStyle}"/>
-
-                <!-- Display User Posts -->
+                
                 <Label Text="User Posts" FontSize="22" HorizontalOptions="Center" Margin="0, 0, 0, 15"/>
                 <CollectionView x:Name="UserPostsCollectionView">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame Padding="10" CornerRadius="10" Margin="0,0,0,10" HasShadow="True" BackgroundColor="White">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPostTapped" CommandParameter="{Binding}" />
+                                </Frame.GestureRecognizers>
                                 <StackLayout>
                                     <Label Text="{Binding Title}" FontSize="20" FontAttributes="Bold" Margin="0,0,0,5" />
                                     <Label Text="{Binding Content}" Margin="0,0,0,5" />
-                                    <!--<Label Text="{Binding PostTime, Converter={StaticResource TimeAgoConverter}}" Margin="0,0,0,5" TextColor="Black"/>-->
 
                                     <StackLayout Orientation="Horizontal" HorizontalOptions="Start" Spacing="8" VerticalOptions="Center">
                                         <Label Text="{Binding LikeCount}" 
