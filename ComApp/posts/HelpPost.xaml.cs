@@ -3,6 +3,8 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using comApp.db;
+using Newtonsoft.Json;
+using static comApp.posts.HelpPostsPage;
 
 namespace comApp.posts
 {
@@ -86,11 +88,16 @@ namespace comApp.posts
             if (response != null && response.IsSuccess)
             {
                 await DisplayAlert("Success", "Help post submitted!", "OK");
-                await Navigation.PopAsync(); 
+                await Navigation.PopAsync();
             }
             else
             {
-                await DisplayAlert("Error", response?.ErrorMessage ?? "Something went wrong.", "OK");
+                string message = response == null
+                    ? "There was an issue creating the help post. Please try again."
+                    : response.StatusCode == 401
+                        ? "You are not authorized to create a help post."
+                        : $"There was an issue creating the help post: {response.ErrorMessage}";
+                await DisplayAlert("Error", message, "OK");
             }
         }
 

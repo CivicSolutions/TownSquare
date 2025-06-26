@@ -32,44 +32,27 @@ public partial class WarningPin : ContentPage
         }
     }
 
-    private async void OnUploadPictureClicked(object sender, EventArgs e)
-    {
-        var result = await FilePicker.PickAsync(new PickOptions
-        {
-            PickerTitle = "Select an image",
-            FileTypes = FilePickerFileType.Images,
-        });
-
-        if (result != null)
-        {
-            selectedImage.Source = ImageSource.FromFile(result.FullPath);
-            Console.WriteLine($"Selected image path: {result.FullPath}");
-        }
-    }
-
     private async Task<Location> GetLocationAsync()
     {
         try
         {
-            Console.WriteLine("Requesting location...");
             var request = new GeolocationRequest(GeolocationAccuracy.Medium);
             var location = await Geolocation.GetLocationAsync(request);
-            Console.WriteLine($"Location received: Lat={location?.Latitude}, Lon={location?.Longitude}");
             return location;
         }
         catch (FeatureNotSupportedException fnsEx)
         {
-            Console.WriteLine("Location not supported on device: " + fnsEx.Message);
+            await DisplayAlert("Error", "Location not supported on device: " + fnsEx.Message, "OK");
             return null;
         }
         catch (PermissionException pEx)
         {
-            Console.WriteLine("Location permission denied: " + pEx.Message);
+            await DisplayAlert("Error", "Location permission denied: " + pEx.Message, "OK");
             return null;
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error getting location: " + ex.ToString());
+            await DisplayAlert("Error", "Error getting location: " + ex.Message, "OK");
             return null;
         }
     }
@@ -110,31 +93,24 @@ public partial class WarningPin : ContentPage
 
     private async void OnSubmitClicked(object sender, EventArgs e)
     {
-        Console.WriteLine("Submit clicked.");
-
         string title = titleEntry.Text;
         string description = descriptionEditor.Text;
         string userId = App.UserId;
 
-        Console.WriteLine($"Input values: title='{title}', description length={description?.Length}, userId='{userId}'");
-
         if (string.IsNullOrWhiteSpace(title) || title.Length > 50)
         {
             titleErrorLabel.Text = string.IsNullOrWhiteSpace(title) ? "Title cannot be empty" : "Title must be maximum 50 characters long";
-            Console.WriteLine("Title validation failed.");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(description) || description.Length > 300)
         {
             descriptionErrorLabel.Text = string.IsNullOrWhiteSpace(description) ? "Description cannot be empty" : "Description must be maximum 300 characters long";
-            Console.WriteLine("Description validation failed.");
             return;
         }
 
         if (string.IsNullOrWhiteSpace(userId))
         {
-            Console.WriteLine("UserId is null or empty.");
             await DisplayAlert("Error", "User ID is missing. Please log in again.", "OK");
             return;
         }
@@ -145,28 +121,18 @@ public partial class WarningPin : ContentPage
             location = await GetLocationAsync();
             if (location == null)
             {
-                Console.WriteLine("Location is null after GetLocationAsync.");
                 await DisplayAlert("Error", "Unable to retrieve location.", "OK");
                 return;
             }
         }
         catch (Exception locEx)
         {
-            Console.WriteLine("Exception during GetLocationAsync: " + locEx.ToString());
             await DisplayAlert("Error", "Unable to retrieve location due to error.", "OK");
             return;
         }
 
         try
         {
-            Console.WriteLine("Calling CreatePin with parameters:");
-            Console.WriteLine($"Title: {title}");
-            Console.WriteLine($"Description: {description}");
-            Console.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}");
-            Console.WriteLine($"CommunityId: 1");
-            Console.WriteLine($"PinType: 2");
-            Console.WriteLine($"UserId: {userId}");
-
             var response = await _dbConnection.CreatePin(
                 title,
                 description,
@@ -183,8 +149,6 @@ public partial class WarningPin : ContentPage
                 await DisplayAlert("Error", "An error occurred while adding the pin.", "OK");
                 return;
             }
-
-            Console.WriteLine($"CreatePin response: IsSuccess={response.IsSuccess}, StatusCode={response.StatusCode}, ErrorMessage='{response.ErrorMessage}'");
 
             if (!response.IsSuccess)
             {
@@ -203,13 +167,11 @@ public partial class WarningPin : ContentPage
         catch (MySqlException mySqlEx)
         {
             string detailedError = mySqlEx.ToString();
-            Console.WriteLine("MySQL Exception: " + detailedError);
             await DisplayAlert("Error", "MySQL error:\n" + detailedError, "OK");
         }
         catch (Exception ex)
         {
             string detailedError = ex.ToString();
-            Console.WriteLine("General Exception: " + detailedError);
             await DisplayAlert("Error", "An error occurred:\n" + detailedError, "OK");
         }
     }

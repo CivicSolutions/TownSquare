@@ -74,6 +74,7 @@ public partial class HelpPostsPage : ContentPage
     {
         var button = (Button)sender;
         var selectedHelpPost = (HelpPosts)button.BindingContext;
+        int id = selectedHelpPost.Id;
 
         string loggedInUserId = App.UserId;
 
@@ -93,7 +94,7 @@ public partial class HelpPostsPage : ContentPage
 
         if (accept)
         {
-            // await _dbConnection.DeletePost($"/HelpPost/DeleteHelpPost/{selectedHelpPost.Id}");
+            await _dbConnection.DeleteHelpPost(id);
             LoadPosts();
         }
     }

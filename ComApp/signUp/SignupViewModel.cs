@@ -6,7 +6,8 @@ namespace comApp.signUp
 {
     public class SignupViewModel
     {
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string Email { get; set; }
         public string Description { get; set; }
         public string Password { get; set; }
@@ -24,7 +25,7 @@ namespace comApp.signUp
 
         private async void Signup()
         {
-            if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Description))
+            if (string.IsNullOrEmpty(FirstName) || string.IsNullOrEmpty(LastName) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Description))
             {
                 await Application.Current.MainPage.DisplayAlert("Error", "Please fill in all fields.", "OK");
                 return;
@@ -36,7 +37,7 @@ namespace comApp.signUp
                 return;
             }
 
-            var response = await _dbConnection.RegisterUser(Name, Email, Password, Description);
+            var response = await _dbConnection.RegisterUser(Email, Password, FirstName, LastName, Description);
 
             if (!response.IsSuccess)
             {
