@@ -32,19 +32,17 @@
                                                FontAttributes="Bold" 
                                                TextColor="#444"/>
                                         <Button
-                                                Clicked="OnLikeButtonClicked"
-                                                CommandParameter="{Binding .}"
-                                                Padding="5"
-                                                CornerRadius="20"
-                                                BackgroundColor="{Binding LikeBackgroundColor}"
-                                                TextColor="White"
-                                                FontSize="14"
-                                                HeightRequest="30"
-                                                WidthRequest="30"
-                                                FontFamily="FontAwesomeSolid"
-                                                Text="{Binding LikeIcon}"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center" />
+                                            Clicked="OnLikeButtonClicked"
+                                            CommandParameter="{Binding .}"
+                                            Padding="10"
+                                            CornerRadius="20"
+                                            BackgroundColor="{Binding LikeBackgroundColor}"
+                                            TextColor="White"
+                                            FontSize="18"
+                                            FontFamily="FontAwesomeSolid" 
+                                            Text="{Binding LikeIcon}"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center" />
                                     </StackLayout>
                                 </StackLayout>
                             </Frame>
@@ -75,19 +73,17 @@
                                                FontAttributes="Bold" 
                                                TextColor="#444"/>
                                         <Button
-                                                Clicked="OnLikeButtonClicked"
-                                                CommandParameter="{Binding .}"
-                                                Padding="5"
-                                                CornerRadius="20"
-                                                BackgroundColor="{Binding LikeBackgroundColor}"
-                                                TextColor="White"
-                                                FontSize="14"
-                                                HeightRequest="30"
-                                                WidthRequest="30"
-                                                FontFamily="FontAwesomeSolid"
-                                                Text="{Binding LikeIcon}"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center" />
+                                            Clicked="OnLikeButtonClicked"
+                                            CommandParameter="{Binding .}"
+                                            Padding="10"
+                                            CornerRadius="20"
+                                            BackgroundColor="{Binding LikeBackgroundColor}"
+                                            TextColor="White"
+                                            FontSize="18"
+                                            FontFamily="FontAwesomeSolid" 
+                                            Text="{Binding LikeIcon}"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center" />
                                     </StackLayout>
                                 </StackLayout>
                             </Frame>
