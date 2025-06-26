@@ -57,7 +57,7 @@
                            HorizontalOptions="End"/>
 
                                 <!-- Description -->
-                                <Label Text="{Binding Description}" 
+                                <Label Text="{Binding Content}" 
                            Margin="0, 0, 0, 5"
                            Grid.Row="1"
                            Grid.Column="0"

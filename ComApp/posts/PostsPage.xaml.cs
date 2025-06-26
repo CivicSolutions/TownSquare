@@ -97,7 +97,8 @@ namespace comApp.posts
                     {
                         post.IsLikedByCurrentUser = !post.IsLikedByCurrentUser;
                         post.LikeCount += post.IsLikedByCurrentUser ? 1 : -1;
-
+                        OnPropertyChanged(nameof(post.LikeIcon));
+                        OnPropertyChanged(nameof(post.LikeBackgroundColor));
                         // Refresh UI
                         NewsPostsCollectionView.ItemsSource = null;
                         UserPostsCollectionView.ItemsSource = null;

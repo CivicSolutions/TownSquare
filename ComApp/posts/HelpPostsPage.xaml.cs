@@ -84,7 +84,7 @@ public partial class HelpPostsPage : ContentPage
         }
 
         string popupMessage = $"Title: {selectedHelpPost.Title}\n" +
-                              $"Description: {selectedHelpPost.Description}\n" +
+                              $"Description: {selectedHelpPost.Content}\n" +
                               $"Price: {selectedHelpPost.Price} CHF\n" +
                               $"Telephone: {selectedHelpPost.Telephone}\n\n" +
                               "Are you sure you want to accept this post?";

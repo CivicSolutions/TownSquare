@@ -36,11 +36,11 @@
                                             CommandParameter="{Binding .}"
                                             Padding="10"
                                             CornerRadius="20"
-                                            BackgroundColor="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonBackgroundConverter}}"
+                                            BackgroundColor="{Binding LikeBackgroundColor}"
                                             TextColor="White"
                                             FontSize="18"
                                             FontFamily="FontAwesomeSolid" 
-                                            Text="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonIconConverter}}"
+                                            Text="{Binding LikeIcon}"
                                             HorizontalOptions="Center"
                                             VerticalOptions="Center" />
                                     </StackLayout>
@@ -77,11 +77,11 @@
                                             CommandParameter="{Binding .}"
                                             Padding="10"
                                             CornerRadius="20"
-                                            BackgroundColor="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonBackgroundConverter}}"
+                                            BackgroundColor="{Binding LikeBackgroundColor}"
                                             TextColor="White"
                                             FontSize="18"
                                             FontFamily="FontAwesomeSolid" 
-                                            Text="{Binding IsLikeByCurrentUser, Converter={StaticResource LikeButtonIconConverter}}"
+                                            Text="{Binding LikeIcon}"
                                             HorizontalOptions="Center"
                                             VerticalOptions="Center" />
                                     </StackLayout>

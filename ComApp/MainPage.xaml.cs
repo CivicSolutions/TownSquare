@@ -66,14 +66,6 @@ namespace comApp
                 }
             }
 
-            Pins.Add(new CustomPin
-            {
-                Label = "Dummy Pin",
-                Address = "Ins, Bern, Switzerland",
-                Location = new Location(47.006, 7.106),
-                PinType = 2
-            });
-
             map.Pins.Clear();
             foreach (var pin in Pins)
             {
